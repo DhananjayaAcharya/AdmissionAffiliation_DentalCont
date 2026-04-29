@@ -1,0 +1,750 @@
+﻿@* Views/Shared/_ContinuousAffiliationSidebar.cshtml *@
+@using Medical_Affiliation.DATA
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ApplicationDbContext _context   // ✅ ADD
+@using System.Text.Json;
+
+@{
+    var collegeCode = HttpContextAccessor.HttpContext.Session.GetString("CollegeCode");
+    var collegeName = HttpContextAccessor.HttpContext.Session.GetString("CollegeName");
+
+    var raw = HttpContextAccessor.HttpContext.Session.GetString("ExistingCourseLevels");
+
+    var levels = string.IsNullOrEmpty(raw)
+    ? new List<string>()
+    : JsonSerializer.Deserialize<List<string>>(raw)
+        .Select(l => l.Trim().ToUpper())
+        .Distinct()
+        .ToList();
+
+
+    var doneSteps = _context.CaProgresses
+    .Where(x => x.CollegeCode == collegeCode &&
+                levels.Contains(x.CourseLevel.Trim().ToUpper()) &&
+                x.IsCompleted == true)
+    .Select(x => x.StepKey)
+    .ToList();
+
+    var currentCtrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAct = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    // ── Step definition ───────────────────────────────────────────────────
+    // Flat list — Physical Facilities sub-items are shown as individual steps
+    var allSteps = new List<StepItem>
+    {
+        // ================= BASIC DETAILS =================
+        new StepItem{ Key="Institution", Label="Institution Details", Group="Basic Details", Ctrl="ContinuesAffiliation_Facultybased", Act="Institution_Details" },
+        new StepItem{ Key="TrustDetails", Label="Trust Details", Group="Basic Details", Ctrl="ContinuesAffiliation_Facultybased", Act="aff_institutedetails" },
+        new StepItem{ Key="TrustMemberDetails", Label="Trust Member Details", Group="Basic Details", Ctrl="ContinuesAffiliation_Facultybased", Act="Aff_TrustMemberDetails" },
+
+        // 👇 CONDITIONAL STEP
+        // MBBS only for UG
+        // we will add below dynamically
+         // new { Key="FacultyDetails", Label="Faculty Details", Group="Basic Details", Ctrl="FacultyDetails", Act="Repo_FacultyDetails" },
+        new StepItem{ Key="DeanDetails", Label="Dean / Director Details", Group="Basic Details", Ctrl="ContinuesAffiliation_Facultybased", Act="Dean_DirectorDetails" },
+        new StepItem{ Key="PrincipalDetails", Label="Principal Details", Group="Basic Details", Ctrl="ContinuesAffiliation_Facultybased", Act="Aff_PrincipalDetails" },
+
+        // ================= PHYSICAL INFRASTRUCTURE =================
+        new StepItem{ Key="LandBuilding", Label="Land & Building", Group="Physical Infrastructure", Ctrl="Medical_ContinuousAffiliation", Act="Medical_LandBuildingdetails" },
+        new StepItem{ Key="SkillsLab", Label="Classroom & Laboratory", Group="Physical Infrastructure", Ctrl="Medical_ContinuousAffiliation", Act="Medical_SkillsLaboratory" },
+        new StepItem{ Key="EquipmentDetails", Label="Equipment Details", Group="Physical Infrastructure", Ctrl="Medical_ContinuousAffiliation", Act="Medical_EquimentDetails" },
+        new StepItem{ Key="EquipmentMaster", Label="Additional Equipment Details", Group="Physical Infrastructure", Ctrl="Medical_ContinuousAffiliation", Act="Medical_EquipmentMaster" },
+        new StepItem{ Key="ClinicalFacilities", Label="Clinical Facilities", Group="Physical Infrastructure", Ctrl="ContinuationAffiliationClinicalFacilities", Act="ClinicalFacilities" },
+        new StepItem{ Key="Vehicle", Label="Vehicle Details", Group="Physical Infrastructure", Ctrl="Aff_AHS_ContinousApplication", Act="CA_VehicleDetails" },
+        new StepItem{ Key="BedDistribution", Label="Bed Distribution", Group="Physical Infrastructure", Ctrl="ContinuesAffiliation_Facultybased", Act="MedicalUGBedDistribution" },
+        new StepItem{ Key="DepartmentUnits", Label="Department / Units", Group="Physical Infrastructure", Ctrl="Medical_ContinuousAffiliation", Act="Medical_DepartmentOfficesAndEducationalUnit" },
+        new StepItem{ Key="Hostel", Label="Hostel Details", Group="Physical Infrastructure", Ctrl="ContinuesAffiliation_Facultybased", Act="Aff_HostelDetails" },
+        new StepItem{ Key = "AssociatedInstitutions", Label = "Associated Institutions",   Group = "Physical Infrastructure", Ctrl = "AffiliationSS", Act = "AssociatedInstitutions" },
+
+
+
+        // ================= ACADEMIC & ADMIN =================v v  v 
+        new StepItem{ Key="AcademicMatters", Label="UG Academic Performance", Group="Academic & Admin", Ctrl="CA_Aff_AcademicMatters", Act="AcademicMatters" },
+        new StepItem{ Key="PGAcademicMatters", Label="PG Academic Performance", Group="Academic & Admin", Ctrl="CA_Aff_AcademicMatters", Act="AcademicMattersPG", Levels = new List<string>{ "PG" } },
+        new StepItem{ Key="Finance", Label="Financial Details", Group="Academic & Admin", Ctrl="Aff_CA_Med_FinanceDetails", Act="Med_CA_AccountAndFeeDetails" },
+        new StepItem{ Key="StaffDetails", Label="Staff Particular Details", Group="Academic & Admin", Ctrl="CA_Med_StaffDetails", Act="CA_Med_StaffDetails" },
+
+        // ================= RESEARCH & LIBRARY =================
+        new StepItem{ Key="Research", Label="Research & Publications", Group="Research & Library", Ctrl="CA_Med_ResearchPublications", Act="CA_Med_ResearchPublicationsDetails" },
+        new StepItem{ Key="Library", Label="Library Details", Group="Research & Library", Ctrl="Aff_CA_MedicalLibrary", Act="Aff_CA_Medical_LibraryDetails" },
+        new StepItem{ Key="LibraryServices", Label="Library Services", Group="Research & Library", Ctrl="CA_Aff_MedicalLibrary", Act="MedicalLibrary" },
+
+        // ================= STUDENT & STAFF =================
+        new StepItem{ Key="FacultyDetails", Label="Faculty Details", Group="Human Resources", Ctrl="FacultyDetails", Act="Repo_FacultyDetails" },
+        new StepItem{ Key="TeachingStaff", Label="Teaching Staff Dept Wise", Group="Human Resources", Ctrl="ContinuesAffiliation_Facultybased", Act="TeachingStaffDepartmentWise" },
+        new StepItem{ Key="NonTeachingStaff", Label="Non-Teaching Staff Dept Wise", Group="Human Resources", Ctrl="ContinuesAffiliation_Facultybased", Act="NonTeachingStaffDepartmentwise" },
+
+
+        // ================= STUDENT AMENITIES =================
+        // new StepItem{ Key="Hostel", Label="Hostel Details", Group="Student Amenities", Ctrl="ContinuesAffiliation_Facultybased", Act="Aff_HostelDetails" },
+
+        // ================= STUDENT AMENITIES =================
+        new StepItem{ Key="IntakeDetails", Label="Intake Details", Group="Intake Details", Ctrl="ContinuousAffiliationIncreaseintake", Act="IncreaseIntake" },
+        new StepItem{ Key = "SsCoursesOffered", Label = "Courses Offered",   Group = "Intake Details", Ctrl = "AffiliationSS", Act = "CoursesOffered", Levels = new List<string>{ "SS" } },
+
+
+        // new { Key="PaymentDetails", Label="Affiliation Payment", Group="Final Submission", Ctrl="AffiliationPayment", Act="Payment" },
+        // new { Key="Declaration", Label="Declaration", Group="Final Submission", Ctrl="AffiliationDeclaration", Act="Declaration" },
+
+        new StepItem{ Key="PreviewMode", Label="Preview", Group="Final Preview", Ctrl="CAPreview", Act="Preview" },
+    };
+
+    // ✅ Add MBBS ONLY for UG
+    if (levels.Contains("UG"))
+    {
+        allSteps.Insert(1, new StepItem
+        {
+            Key = "MBBSDetails",
+            Label = "UG Course Details",
+            Group = "Intake Details",
+            Ctrl = "ContinuesAffiliation_Facultybased",
+            Act = "Details_Of_MBBS"
+        });
+    }
+
+    // ✅ Add PG-specific steps
+    if (levels.Contains("PG"))
+    {
+        var pgSteps = new List<StepItem>
+        {
+            // new
+            // {
+            //     Key = "PgCoursesOffered",
+            //     Label = "Courses Offered",
+            //     Group = "PG Details",
+            //     Ctrl = "AffiliationPgCourse",
+            //     Act = "PgCourses"
+            // },
+            new StepItem
+            {
+                Key = "PgCourses",
+                Label = "PG Course Details",
+                Group = "Intake Details",
+                Ctrl = "AffiliationPgCourse",
+                Act = "PgCourses",
+            },
+        };
+
+        // 👉 Find last index of "Basic Details"
+        var lastBasicIndex = allSteps
+            .Select((step, index) => new { step, index })
+            .Where(x => x.step.Group == "Basic Details")
+            .Select(x => x.index)
+            .LastOrDefault();
+
+        // 👉 Insert AFTER Basic Details
+        allSteps.InsertRange(lastBasicIndex + 1, pgSteps);
+    }
+
+    void InsertAfterBasicDetails(List<StepItem> newSteps)
+    {
+        var lastBasicIndex = allSteps
+            .Select((step, index) => new { step, index })
+            .Where(x => x.step.Group == "Basic Details")
+            .Select(x => x.index)
+            .LastOrDefault();
+
+        if (lastBasicIndex >= 0)
+            allSteps.InsertRange(lastBasicIndex + 1, newSteps);
+    }
+
+    // ✅ SS Specific - Added your new tab "SS Courses Applied"
+    if (levels.Contains("SS"))
+    {
+        var ssSteps = new List<StepItem>
+        {
+            // new { Key = "SsCourseDetails",         Label = "Super Specialty Course Details",   Group = "SS Details", Ctrl = "AffiliationSS", Act = "SsCourses" },
+            // new StepItem{ Key = "SsAssociatedInstitutions", Label = "Associated Institutions",         Group = "SS Details", Ctrl = "AffiliationSS", Act = "AssociatedInstitutions" },
+
+            // ✅ NEW TAB YOU REQUESTED
+            new StepItem{ Key = "SsCoursesApplied",        Label = "SS Course Details",               Group = "Intake Details",
+                  Ctrl = "Aff_CA_SS_CoursesAppliedSS",
+                  Act = "CA_SS_CoursesApplied" }
+        };
+        InsertAfterBasicDetails(ssSteps);
+    }
+
+
+
+    // 🔥 Exclude IntakeDetails from progress
+    var progressSteps = allSteps
+    .Where(s => s.Key != "IntakeDetails")
+    .ToList();
+
+    int total = progressSteps.Count;
+    int done = progressSteps.Count(s => doneSteps.Contains(s.Key));
+    int pct = total > 0 ? (int)Math.Round((double)done / total * 100) : 0;
+
+    // int total = allSteps.Count;
+    // int done = allSteps.Count(s => doneSteps.Contains(s.Key));
+    // int pct = total > 0 ? (int)Math.Round((double)done / total * 100) : 0;
+
+    // Track which group label we last printed (for group headers)
+    string lastGroup = "";
+
+    allSteps = allSteps
+    .Where(step =>
+        step.Levels == null || step.Levels.Count == 0   // ✅ default (UG/common)
+        || step.Levels.Any(l => levels.Contains(l))     // PG / SS match
+    )
+    .ToList();
+
+
+    var groupedSteps = allSteps
+            .GroupBy(s => s.Group)
+            .ToList();
+
+
+}
+<link rel="stylesheet" href="~/css/common-form.css" />
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    /* ══════════════════════════════
+                   CA SIDEBAR
+                ══════════════════════════════ */
+    .ca-sb {
+        width: 18vw;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0f2545 0%, #162e55 100%);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        font-family: 'DM Sans', sans-serif;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        box-shadow: 2px 0 16px rgba(0,0,0,0.25);
+    }
+
+        .ca-sb::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .ca-sb::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 99px;
+        }
+
+    /* Brand */
+    .ca-sb-top {
+        padding: 20px 18px 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        flex-shrink: 0;
+    }
+
+    .ca-sb-title {
+        font-family: 'EB Garamond', serif;
+        font-size: 1.1rem;
+        color: #fff;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+
+    .ca-sb-subtitle {
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #d4a84b;
+        margin-top: 3px;
+    }
+
+    /* Level pill */
+    .ca-sb-level-row {
+        padding: 12px 18px;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        flex-shrink: 0;
+    }
+
+    .ca-sb-level-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(184,136,42,0.14);
+        border: 1px solid rgba(184,136,42,0.3);
+        border-radius: 5px;
+        padding: 5px 13px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: #d4a84b;
+        text-transform: uppercase;
+    }
+
+    /* Progress */
+    .ca-sb-prog {
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        flex-shrink: 0;
+    }
+
+    .ca-sb-prog-top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+
+    .ca-sb-prog-lbl {
+        font-size: 0.58rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+    }
+
+    .ca-sb-prog-pct {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #d4a84b;
+    }
+
+    .ca-sb-track {
+        height: 4px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 99px;
+        overflow: hidden;
+    }
+
+    .ca-sb-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #b8882a, #d4a84b);
+        transition: width 0.4s ease;
+    }
+
+    .ca-sb-prog-note {
+        font-size: 0.58rem;
+        color: rgba(255,255,255,0.25);
+        text-align: right;
+        margin-top: 4px;
+    }
+
+    /* Nav */
+    .ca-sb-nav {
+        flex: 1;
+        list-style: none;
+        padding: 6px 0 16px;
+        margin: 0;
+        overflow-y: auto;
+    }
+
+        .ca-sb-nav::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .ca-sb-nav::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.08);
+            border-radius: 99px;
+        }
+
+    /* Group label (e.g. "Physical Facilities") */
+    .ca-sb-group-label {
+        font-size: 0.57rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.22);
+        padding: 12px 18px 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .ca-sb-group-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+        }
+
+    /* Step link */
+    .ca-sb-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 10px;
+        text-decoration: none;
+        color: rgba(255,255,255,0.5);
+        font-size: 0.78rem;
+        font-weight: 500;
+        transition: background 0.15s, color 0.15s;
+        border-left: 3px solid transparent;
+    }
+
+        .ca-sb-link:hover {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.82);
+            text-decoration: none;
+        }
+
+        .ca-sb-link.is-active {
+            background: rgba(184,136,42,0.12);
+            border-left-color: #d4a84b;
+            color: #fff;
+            font-weight: 600;
+            padding-left: 10px;
+        }
+
+        /* Indented sub-steps (Physical Facilities items) */
+        .ca-sb-link.is-sub {
+            padding-left: 32px;
+            font-size: 0.75rem;
+        }
+
+            .ca-sb-link.is-sub.is-active {
+                padding-left: 29px;
+            }
+
+    /* Step dot */
+    .ca-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.58rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .ca-dot-done {
+        background: #1a6b3a;
+        color: #fff;
+    }
+
+    .ca-dot-current {
+        background: linear-gradient(135deg,#b8882a,#d4a84b);
+        color: #fff;
+        box-shadow: 0 0 0 3px rgba(212,168,75,0.18);
+    }
+
+    .ca-dot-pending {
+        background: rgba(255,255,255,0.07);
+        border: 1.5px solid rgba(255,255,255,0.14);
+        color: rgba(255,255,255,0.22);
+    }
+
+    .ca-sb-check {
+        font-size: 0.6rem;
+        color: #2e8b57;
+        margin-left: auto;
+    }
+
+    /* Footer */
+    .ca-sb-footer {
+        padding: 12px 18px;
+        border-top: 1px solid rgba(255,255,255,0.07);
+        flex-shrink: 0;
+    }
+
+    .ca-sb-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.7rem;
+        color: rgba(255,255,255,0.3);
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+
+        .ca-sb-back:hover {
+            color: #d4a84b;
+            text-decoration: none;
+        }
+
+    /* SS Coming Soon overlay */
+    .ca-ss-coming {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 18px;
+        text-align: center;
+        color: rgba(255,255,255,0.3);
+        gap: 10px;
+    }
+
+    .ca-ss-coming-icon {
+        font-size: 2.2rem;
+        opacity: 0.35;
+    }
+
+    .ca-ss-coming-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.45);
+    }
+
+    .ca-ss-coming-desc {
+        font-size: 0.72rem;
+        line-height: 1.5;
+    }
+
+    .ca-ss-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 99px;
+        padding: 4px 14px;
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+        margin-top: 4px;
+    }
+
+    .btn-logout {
+        background: transparent;
+        border: 1px solid rgba(255,255,255,.35);
+        color: rgba(255,255,255,.85);
+        border-radius: 7px;
+        padding: 5px 14px;
+        font-size: .78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+
+    .accordion-container {
+        width: 100%;
+    }
+
+    .accordion-item {
+        /* border-bottom: 1px solid #eee; */
+
+        background: linear-gradient(180deg, #0f2545 0%, #162e55 100%);
+    }
+
+    .accordion-header {
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: .5px;
+        /* text-transform: uppercase; */
+        color: rgba(255,255,255,0.22);
+        padding: 12px 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* .accordion-header::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255,255,255,0.07);
+    } */
+        .accordion-header:hover {
+            color: rgba(255,255,255,0.45);
+        }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease;
+        padding-left: 10px;
+    }
+
+    /* .step-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 16px;
+        text-decoration: none;
+        color: #333;
+    }
+
+        .step-item.active {
+            background: #e6f0ff;
+            font-weight: bold;
+        } */
+
+    .tick {
+        color: green;
+    }
+
+    .tab-header.active-tab {
+        color: #d4a84b;
+        font-weight: 700;
+    }
+
+    .tab-header.active-tab .toggle-icon {
+        transform: rotate(180deg);   /* ▼ becomes ▲ */
+        color: #d4a84b;
+    }
+
+    .toggle-icon {
+        margin-left: auto;              /* push to right */
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.4);
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-header:hover .toggle-icon {
+        transform: rotate(180deg);
+        color: #fff;
+    }
+
+</style>
+
+<aside class="ca-sb">
+
+    <!-- Brand -->
+    <div class="ca-sb-top">
+        @* <div class="ca-sb-title">@collegeName</div> *@
+        <div class="ca-sb-title">College Details</div>
+        @* <div class="ca-sb-subtitle">Faculty-Based Module</div> *@
+    </div>
+
+    <!-- Level pill -->
+    @* <div class="ca-sb-level-row">
+        <span class="ca-sb-level-pill">
+            <i class="bi bi-mortarboard-fill"></i>
+            @level Programme
+        </span>
+    </div> *@
+
+    
+    <!-- Progress bar (UG and PG and SS) -->
+    <div class="ca-sb-prog">
+        <div class="ca-sb-prog-top">
+            <span class="ca-sb-prog-lbl">Completion</span>
+            <span class="ca-sb-prog-pct">@pct%</span>
+        </div>
+        <div class="ca-sb-track">
+            <div class="ca-sb-fill" style="width:@pct%"></div>
+        </div>
+        <div class="ca-sb-prog-note">@done of @total steps completed</div>
+    </div>
+
+    <!-- Step list (flat) -->
+    <div class="accordion-container">
+        @foreach (var group in groupedSteps)
+        {
+            var groupId = group.Key.Replace(" ", "");
+
+            <div class="accordion-item">
+                <!-- Accordion Header -->
+                <div class="accordion-header tab-header"
+                     data-tab="@groupId"
+                     onclick="toggleAccordion('@groupId')">
+                    <span>@group.Key</span>
+                    <i class="bi bi-chevron-down toggle-icon"></i>
+                </div>
+
+                <!-- Accordion Content -->
+                <div class="accordion-content tab-content"
+                     id="content-@groupId"
+                     data-tab-content="@groupId">
+                    @foreach (var step in group)
+                    {
+                        var isActive = currentCtrl == step.Ctrl && currentAct == step.Act;
+                        var isDone = doneSteps.Contains(step.Key);
+
+                        string dotCls = isActive ? "ca-dot ca-dot-current"
+                            : isDone ? "ca-dot ca-dot-done"
+                            : "ca-dot ca-dot-pending";
+
+                        string linkCls = "ca-sb-link"
+                            + (isActive ? " is-active" : "");
+
+                        <a href="@Url.Action(step.Act, step.Ctrl)" class="@linkCls">
+
+                            <div class="@dotCls">
+                                @if (isDone)
+                                {
+                                    <text>&#10003;</text>
+                                }
+                            </div>
+
+                            <span style="flex:1;">@step.Label</span>
+
+                            @if (isDone && !isActive)
+                            {
+                                <span class="ca-sb-check">&#10003;</span>
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <!-- Footer -->
+    <div class="ca-sb-footer">
+        <div style="text-align: center;">
+            <a asp-action="Dashboard" asp-controller="Collegelogin" style="font-size: .8rem; color: white; text-decoration: none; padding: 5px;"> Back To Dashboard</a>
+        </div>
+    </div>
+
+</aside>
+
+<script>
+    
+    function toggleAccordion(groupId) {
+
+        const currentContent = document.querySelector(`[data-tab-content="${groupId}"]`);
+        const currentHeader = document.querySelector(`[data-tab="${groupId}"]`);
+
+        const isOpen = currentHeader.classList.contains("active-tab");
+
+        const allContents = document.querySelectorAll(".tab-content");
+        const allHeaders = document.querySelectorAll(".tab-header");
+
+        // Close all
+        allContents.forEach(c => c.style.maxHeight = null);
+        allHeaders.forEach(h => h.classList.remove("active-tab"));
+
+        // If it was already open → close only
+        if (isOpen) {
+            sessionStorage.removeItem("activeTab");
+            return;
+        }
+
+        // Otherwise open it
+        sessionStorage.setItem("activeTab", groupId);
+
+        if (currentContent) {
+            currentContent.style.maxHeight = currentContent.scrollHeight + "px";
+        }
+
+        if (currentHeader) {
+            currentHeader.classList.add("active-tab");
+        }
+    }
+
+    // Auto-open active group
+    window.onload = function () {
+
+    let activeTab = sessionStorage.getItem("activeTab");
+
+    // fallback → detect active step
+    if (!activeTab) {
+        const activeLink = document.querySelector(".ca-sb-link.is-active");
+        if (activeLink) {
+            const parent = activeLink.closest(".tab-content");
+            if (parent) {
+                activeTab = parent.getAttribute("data-tab-content");
+            }
+        }
+    }
+
+    if (activeTab) {
+        toggleAccordion(activeTab);
+    }
+};
+</script>

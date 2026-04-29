@@ -1,0 +1,324 @@
+﻿@model SidebarViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var isSubmitDisplayString = HttpContextAccessor.HttpContext.Session.GetString("IsSubmitDisplay");
+    var ugCourse = HttpContextAccessor.HttpContext.Session.GetString("UgCourse");
+    var facultyCode = HttpContextAccessor.HttpContext.Session.GetString("FacultyCode");
+    var collegecode = HttpContextAccessor.HttpContext.Session.GetString("CollegeCode");
+    bool isSubmitDisplay = false;
+    var showNodalOfficer = HttpContextAccessor.HttpContext.Session.GetString("ShowNodalOfficer");
+    var showIntakeDetails = HttpContextAccessor.HttpContext.Session.GetString("ShowIntakeDetails");
+    var showRepository = HttpContextAccessor.HttpContext.Session.GetString("ShowRepository");
+    var sidebarActionMethod = HttpContextAccessor.HttpContext.Session.GetString("sidebarActionMethod");
+    var sidebarController = HttpContextAccessor.HttpContext.Session.GetString("sidebarController");
+
+    if (!string.IsNullOrEmpty(isSubmitDisplayString))
+    {
+        bool.TryParse(isSubmitDisplayString, out isSubmitDisplay);
+    }
+
+    // Helper to check active link (optional improvement)
+    string currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    string currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<style>
+    :root {
+        --sidebar-bg: #0f1e3a; /* deep navy */
+        --sidebar-accent: #097969; /* teal accent */
+        --sidebar-text: #e0f0ff;
+        --sidebar-hover: #1a355c;
+        --sidebar-active: #097969;
+        --sidebar-border: rgba(255,255,255,0.08);
+        --header-height-lg: 12vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: var(--header-height, 80px);
+        left: 0;
+        width: 280px;
+        height: calc(100vh - var(--header-height));
+        background: var(--sidebar-bg);
+        color: var(--sidebar-text);
+        box-shadow: 2px 0 20px rgba(0,0,0,0.35);
+        padding: 1.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        z-index: 900;
+        overflow-y: auto;
+        border-right: 1px solid var(--sidebar-border);
+        transition: width 0.3s ease;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.2rem;
+        border-bottom: 1px solid var(--sidebar-border);
+    }
+
+        .sidebar-header h4 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-item {
+        margin-bottom: 0.35rem;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 0.85rem 1.2rem;
+        color: var(--sidebar-text);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.98rem;
+        transition: all 0.25s ease;
+    }
+
+        .sidebar-link i {
+            margin-right: 12px;
+            font-size: 1.15rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover {
+            background: var(--sidebar-hover);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link.active {
+            background: var(--sidebar-active);
+            color: white;
+            font-weight: 600;
+        }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--sidebar-border);
+    }
+
+    .sidebar-btn-password {
+        width: 100%;
+        background: rgba(9,121,105,0.15);
+        border: 1px solid var(--sidebar-accent);
+        color: var(--sidebar-accent);
+        font-weight: 600;
+        padding: 0.75rem;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+        .sidebar-btn-password:hover {
+            background: var(--sidebar-accent);
+            color: white;
+        }
+
+    /* Mobile / responsive */
+    @@media (max-width: 991px) {
+        .sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+            top: 0;
+            left: 0;
+            box-shadow: none;
+            border-right: none;
+            border-bottom: 1px solid var(--sidebar-border);
+            padding: 1.2rem;
+        }
+    }
+
+    @@media (max-width: 1200px) {
+        .sidebar {
+            width: 240px;
+        }
+
+        .sidebar-link {
+            font-size: 0.95rem;
+            padding: 0.75rem 1rem;
+        }
+    }
+
+    @@media (min-width: 1024px) {
+        .sidebar {
+            height: calc(100vh - var(--header-height-lg));
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar{
+            display: none;
+        }
+    }
+
+    .sidebar .dropdown-menu {
+        position: static !important;
+        display: block;
+        margin-left: 10px;
+        background: transparent;
+        border: none;
+    }
+
+    .sidebar .dropdown-item {
+        color: #e0f0ff;
+        padding-left: 20px;
+    }
+
+        .sidebar .dropdown-item:hover {
+            background: #1a355c;
+        }
+
+    .d-none {
+        display: none !important;
+    }
+
+    splay: none;
+    }
+</style>
+
+@if (!string.IsNullOrEmpty(Model.FacultyCode))
+{
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h4>College Dashboard</h4>
+        </div>
+
+         <ul class="sidebar-menu">
+          @*  @if (facultyCode == "1")
+            {
+                /* <li class="sidebar-item">
+                    <a asp-controller="AcademicIntake" asp-action="AcademicIntakeData"
+                       class="sidebar-link @(currentController == "AcademicIntake" ? "active" : "")">
+                        <i class="bi bi-journal-text"></i>
+                        Application for Affiliation 2026-27
+                    </a>
+                </li> */
+            }
+            @if (facultyCode == "1")
+            {
+                <li class="sidebar-item">
+                    <a asp-controller="ContinuousAffiliationIncreaseintake" asp-action="IncreaseIntake"
+                       class="sidebar-link @(currentController == "AcademicIntake" ? "active" : "")">
+                        <i class="bi bi-journal-text"></i>
+                        Application for Increase Intake
+                    </a>
+                </li>
+            } *@
+
+            @if (facultyCode == "1")
+            {
+                <li class="sidebar-item">
+                    <a asp-controller="ContinuesAffiliation_Facultybased"
+                           asp-action="Institution_Details"
+                           class="sidebar-link @(currentController == "CollegeBasicDetails" ? "active" : "")">
+
+                        <i class="bi bi-building"></i>
+                        College Basic Details
+                    </a>
+                </li>
+            }
+
+            @if (facultyCode == "12")
+            {
+                <li class="sidebar-item">
+                    <a asp-controller="Fellowship" asp-action="FellowshipMedical_Details"
+                       class="sidebar-link @(currentController == "Fellowship" ? "active" : "")">
+                        <i class="bi bi-mortarboard"></i>
+                        Fellowship Application
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a asp-controller="Fellowship" asp-action="AcceptedRejectedDashboard"
+                       class="sidebar-link">
+                        <i class="bi bi-check2-circle"></i>
+                        Approved / Rejected Applications
+                    </a>
+                </li>
+            }
+
+           
+
+            <!-- Digital Repository – shown conditionally based on faculty -->
+          
+
+            <!-- Update Password -->
+            <li class="sidebar-item sidebar-footer">
+                <button class="sidebar-btn-password" data-bs-toggle="modal" data-bs-target="#updatePasswordModal">
+                    <i class="bi bi-lock"></i> Update Password
+                </button>
+            </li>
+
+        </ul>
+    </aside>
+
+    <!-- Update Password Modal -->
+    <div class="modal fade" id="updatePasswordModal" tabindex="-1" aria-labelledby="updatePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form asp-action="UpdatePassword" asp-controller="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updatePasswordModalLabel">Change Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="CollegeCode" value="@collegecode" />
+                        <div class="mb-3 position-relative">
+                            <label for="NewPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="NewPassword" name="UpdatedPassword" required autocomplete="new-password" />
+                            <span class="position-absolute top-50 end-0 translate-middle-y pe-3 toggle-password" style="cursor:pointer; transform: translateY(-50%);">
+                                <i class="bi bi-eye" id="toggleIcon"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.querySelector(".toggle-password");
+        const passwordInput = document.getElementById("NewPassword");
+        const toggleIcon = document.getElementById("toggleIcon");
+
+        if (toggleBtn && passwordInput && toggleIcon) {
+            toggleBtn.addEventListener("click", function () {
+                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                passwordInput.setAttribute("type", type);
+                toggleIcon.className = type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
+            });
+        }
+    });
+
+    function toggleMenu(e, id) {
+        e.preventDefault();
+
+        const menu = document.getElementById(id);
+        if (!menu) return;
+
+        menu.classList.toggle("d-none");
+    }
+</script>
