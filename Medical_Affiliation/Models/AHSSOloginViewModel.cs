@@ -104,6 +104,10 @@ namespace Medical_Affiliation.Models
         public byte[]? TrustDocData { get; set; }
         public byte[]? EstablishmentDocData { get; set; }
 
+        public string? TrustDocPath { get; set; }
+        public string? EstablishmentDocPath { get; set; }
+
+
         public string SelectedDistrictId { get; set; }
         public string SelectedTalukId { get; set; }
         public List<SelectListItem> DistrictDropdownList { get; set; } = new();

@@ -25,7 +25,7 @@ namespace Medical_Affiliation.Controllers
             if (string.IsNullOrEmpty(facultyCodeString))
                 return RedirectToAction("Login", "Account");
 
-            var nc = _context.NursingCollegeRegistrations
+            var collegeMaster = _context.AffiliationCollegeMasters
                 .FirstOrDefault(x => x.CollegeCode == collegeCode && x.FacultyCode == facultyCodeString);
 
             var ni = _context.MedicalInstituteDetails
@@ -33,34 +33,45 @@ namespace Medical_Affiliation.Controllers
 
             var viewModel = new NursingInstituteDetailViewModel
             {
-                CollegeCode = ni?.CollegeCode,
-                FacultyCode = ni?.FacultyCode,
-                InstituteName = ni?.InstituteName ?? HttpContext.Session.GetString("CollegeName"),
+                CollegeCode = collegeCode,
+                FacultyCode = facultyCodeString,
+
+                InstituteName = ni?.InstituteName
+                                ?? collegeMaster?.CollegeName
+                                ?? HttpContext.Session.GetString("CollegeName"),
+
                 InstituteAddress = ni?.InstituteAddress,
                 TrustSocietyName = ni?.TrustSocietyName,
+
                 YearOfEstablishmentOfTrust = DateOnly.TryParse(ni?.YearOfEstablishmentOfTrust, out var y1)
                                                 ? y1 : (DateOnly?)null,
+
                 YearOfEstablishmentOfCollege = DateOnly.TryParse(ni?.YearOfEstablishmentOfCollege, out var y2)
                                                 ? y2 : (DateOnly?)null,
+
                 InstitutionType = ni?.InstitutionType,
-                HodofInstitution = ni?.HodofInstitution,
+
+                HodofInstitution = ni?.HodofInstitution ?? collegeMaster?.PrincipalNameDeclared,
+
                 Dob = ni?.Dob,
                 Age = ni?.Age,
                 TeachingExperience = ni?.TeachingExperience,
+
                 Degree = (!string.IsNullOrEmpty(ni?.PgDegree))
                     ? ni.PgDegree.Split(',').Select(d => d.Trim()).ToList()
                     : new List<string>(),
+
                 CourseCode = ni?.Course,
                 CourseSelectedSpecialities = ni?.SelectedSpecialities,
                 OtherDegreeText = ni?.OtherDegree,
-                TrustDocData = ni?.TrustDoc,
-                EstablishmentDocData = ni?.EshtablishmentDoc,
 
-                // ── District & Taluk (edit mode restore) ──
-                SelectedDistrictId = ni?.District,
-                SelectedTalukId = ni?.Taluk,
+                // ✅ UPDATED: FILE PATHS INSTEAD OF BINARY
+                TrustDocPath = ni?.TrustDocPath,
+                EstablishmentDocPath = ni?.EstablishmentDocPath,
 
-                // ── District Dropdown ──
+                SelectedDistrictId = ni?.District ?? collegeMaster?.DistrictId,
+                SelectedTalukId = ni?.Taluk ?? collegeMaster?.TalukId,
+
                 DistrictDropdownList = _context.DistrictMasters
                     .Where(d => d.DistrictName != null && d.DistrictName != "")
                     .OrderBy(d => d.DistrictName)
@@ -70,7 +81,6 @@ namespace Medical_Affiliation.Controllers
                         Text = d.DistrictName
                     }).ToList(),
 
-                // ── Taluk Dropdown (full list; AJAX filters by district) ──
                 TalukDropdownList = _context.TalukMasters
                     .OrderBy(t => t.TalukName)
                     .Select(t => new SelectListItem
@@ -80,35 +90,6 @@ namespace Medical_Affiliation.Controllers
                     }).ToList(),
             };
 
-            if (viewModel.CollegeCode == null && viewModel.FacultyCode == null)
-            {
-                viewModel = new NursingInstituteDetailViewModel
-                {
-                    CollegeCode = collegeCode,
-                    FacultyCode = facultyCodeString,
-                    InstituteName = HttpContext.Session.GetString("CollegeName"),
-                    Degree = new List<string>(),
-
-                    // ── District Dropdown for fresh form ──
-                    DistrictDropdownList = _context.DistrictMasters
-                        .Where(d => d.DistrictName != null && d.DistrictName != "")
-                        .OrderBy(d => d.DistrictName)
-                        .Select(d => new SelectListItem
-                        {
-                            Value = d.DistrictName,
-                            Text = d.DistrictName
-                        }).ToList(),
-
-                    TalukDropdownList = _context.TalukMasters
-                        .OrderBy(t => t.TalukName)
-                        .Select(t => new SelectListItem
-                        {
-                            Value = t.TalukId.ToString(),
-                            Text = t.TalukName
-                        }).ToList(),
-                };
-            }
-
             ViewBag.Courses = _context.MstCourses
                 .Where(c => c.FacultyCode.ToString() == facultyCodeString)
                 .OrderBy(c => c.CourseName)
@@ -116,7 +97,6 @@ namespace Medical_Affiliation.Controllers
 
             return View(viewModel);
         }
-
         [HttpGet]
         public IActionResult GetTaluksByDistrict(string districtName)
         {
@@ -170,6 +150,12 @@ namespace Medical_Affiliation.Controllers
             var existingEntity = _context.MedicalInstituteDetails
                 .FirstOrDefault(x => x.CollegeCode == collegeCode && x.FacultyCode == facultyCodeString);
 
+            string basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/InstitutionDetails");
+
+            if (!Directory.Exists(basePath))
+                Directory.CreateDirectory(basePath);
+
+            // ================= UPDATE =================
             if (existingEntity != null)
             {
                 // ── Basic Info ──
@@ -186,33 +172,55 @@ namespace Medical_Affiliation.Controllers
                 existingEntity.SelectedSpecialities = model.CourseSelectedSpecialities;
                 existingEntity.Course = model.CourseCode;
                 existingEntity.OtherDegree = model.OtherDegreeText;
-
-                // ── District & Taluk ──
                 existingEntity.District = model.SelectedDistrictId;
                 existingEntity.Taluk = model.SelectedTalukId;
 
                 // ── Trust Document ──
-                if (model.TrustEstablishmentDocument != null)
+                if (model.TrustEstablishmentDocument != null && model.TrustEstablishmentDocument.Length > 0)
                 {
-                    using (var ms = new MemoryStream())
+                    // Delete old file
+                    if (!string.IsNullOrEmpty(existingEntity.TrustDocPath) &&
+                        System.IO.File.Exists(existingEntity.TrustDocPath))
                     {
-                        model.TrustEstablishmentDocument.CopyTo(ms);
-                        existingEntity.TrustDoc = ms.ToArray();
+                        System.IO.File.Delete(existingEntity.TrustDocPath);
                     }
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.TrustEstablishmentDocument.FileName);
+                    string fullPath = Path.Combine(basePath, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        model.TrustEstablishmentDocument.CopyTo(stream);
+                    }
+
+                    existingEntity.TrustDocPath = fullPath;
                 }
 
                 // ── Establishment Document ──
-                if (model.CollegeEstablishmentDocument != null)
+                if (model.CollegeEstablishmentDocument != null && model.CollegeEstablishmentDocument.Length > 0)
                 {
-                    using (var ms = new MemoryStream())
+                    // Delete old file
+                    if (!string.IsNullOrEmpty(existingEntity.EstablishmentDocPath) &&
+                        System.IO.File.Exists(existingEntity.EstablishmentDocPath))
                     {
-                        model.CollegeEstablishmentDocument.CopyTo(ms);
-                        existingEntity.EshtablishmentDoc = ms.ToArray();
+                        System.IO.File.Delete(existingEntity.EstablishmentDocPath);
                     }
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.CollegeEstablishmentDocument.FileName);
+                    string fullPath = Path.Combine(basePath, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        model.CollegeEstablishmentDocument.CopyTo(stream);
+                    }
+
+                    existingEntity.EstablishmentDocPath = fullPath;
                 }
 
                 _context.Update(existingEntity);
             }
+
+            // ================= INSERT =================
             else
             {
                 var entity = new MedicalInstituteDetail
@@ -233,30 +241,36 @@ namespace Medical_Affiliation.Controllers
                     SelectedSpecialities = model.CourseSelectedSpecialities,
                     Course = model.CourseCode,
                     OtherDegree = model.OtherDegreeText,
-
-                    // ── District & Taluk ──
                     District = model.SelectedDistrictId,
-                    Taluk = model.SelectedTalukId,
+                    Taluk = model.SelectedTalukId
                 };
 
                 // ── Trust Document ──
-                if (model.TrustEstablishmentDocument != null)
+                if (model.TrustEstablishmentDocument != null && model.TrustEstablishmentDocument.Length > 0)
                 {
-                    using (var ms = new MemoryStream())
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.TrustEstablishmentDocument.FileName);
+                    string fullPath = Path.Combine(basePath, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        model.TrustEstablishmentDocument.CopyTo(ms);
-                        entity.TrustDoc = ms.ToArray();
+                        model.TrustEstablishmentDocument.CopyTo(stream);
                     }
+
+                    entity.TrustDocPath = fullPath;
                 }
 
                 // ── Establishment Document ──
-                if (model.CollegeEstablishmentDocument != null)
+                if (model.CollegeEstablishmentDocument != null && model.CollegeEstablishmentDocument.Length > 0)
                 {
-                    using (var ms = new MemoryStream())
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.CollegeEstablishmentDocument.FileName);
+                    string fullPath = Path.Combine(basePath, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        model.CollegeEstablishmentDocument.CopyTo(ms);
-                        entity.EshtablishmentDoc = ms.ToArray();
+                        model.CollegeEstablishmentDocument.CopyTo(stream);
                     }
+
+                    entity.EstablishmentDocPath = fullPath;
                 }
 
                 _context.Add(entity);

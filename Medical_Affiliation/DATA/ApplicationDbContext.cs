@@ -428,9 +428,9 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<YearwiseMaterialsDatum> YearwiseMaterialsData { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=localhost\\MSSQLSERVER01;Database=Admission_Affiliation;Trusted_Connection=True;TrustServerCertificate=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=.;Database=Admission_Affiliation;TrustServerCertificate=True;Trusted_Connection=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1131,8 +1131,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.FacultyCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.NmcsupportingDocument).HasColumnName("NMCsupportingDocument");
-            entity.Property(e => e.NmcsupportingDocumentPath).HasMaxLength(500);
+            entity.Property(e => e.NmcsupportingDocumentPath)
+                .HasMaxLength(500)
+                .HasColumnName("NMCsupportingDocumentPath");
             entity.Property(e => e.PermissionByNmc).HasColumnName("PermissionByNMC");
             entity.Property(e => e.TypeOfAffiliation)
                 .HasMaxLength(100)
@@ -1239,8 +1240,9 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
-            entity.Property(e => e.DocumentofGok).HasColumnName("DocumentofGOK");
-            entity.Property(e => e.DocumentofGokpath).HasMaxLength(500);
+            entity.Property(e => e.DocumentofGokpath)
+                .HasMaxLength(500)
+                .HasColumnName("DocumentofGOKPath");
             entity.Property(e => e.FacultyCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -1272,8 +1274,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.FacultyCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.RguhssupportingDocument).HasColumnName("RGUHSsupportingDocument");
-            entity.Property(e => e.RguhssupportingDocumentPath).HasMaxLength(500);
+            entity.Property(e => e.RguhssupportingDocumentPath)
+                .HasMaxLength(500)
+                .HasColumnName("RGUHSsupportingDocumentPath");
             entity.Property(e => e.TypeOfAffiliation)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -1421,7 +1424,9 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.PassPercentage).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.Remarks).HasMaxLength(500);
-            entity.Property(e => e.Subject).HasMaxLength(100);
+            entity.Property(e => e.Subject)
+                .HasMaxLength(100)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.YearOfStudy).WithMany(p => p.CaAcademicPerformances)
                 .HasForeignKey(d => d.YearOfStudyId)
@@ -1971,9 +1976,11 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("CA_MST_Med_CommitteeNames");
 
             entity.Property(e => e.CommitteeName).HasMaxLength(200);
+            entity.Property(e => e.CourseLevel)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.FacultyCode).HasMaxLength(20);
             entity.Property(e => e.SubFacultyCode).HasMaxLength(20);
-            entity.Property(e => e.CourseLevel).HasMaxLength(10);
         });
 
         modelBuilder.Entity<CaMstMedLibTechnicalProcess>(entity =>
@@ -3383,7 +3390,7 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<MedCaAccountAndFeeDetail>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.CollegeCode, e.FacultyCode }).HasFillFactor(80);
+            entity.HasKey(e => new { e.Id, e.CollegeCode, e.FacultyCode, e.CourseLevel });
 
             entity.ToTable("Med_CA_AccountAndFeeDetails");
 
@@ -3535,6 +3542,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.CollegeCode).HasMaxLength(50);
             entity.Property(e => e.Course).HasMaxLength(10);
             entity.Property(e => e.District).HasMaxLength(50);
+            entity.Property(e => e.EstablishmentDocPath).HasMaxLength(500);
             entity.Property(e => e.FacultyCode).HasMaxLength(50);
             entity.Property(e => e.HodofInstitution).HasMaxLength(200);
             entity.Property(e => e.InstituteAddress).HasMaxLength(1000);
@@ -3546,6 +3554,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Specialisation).HasMaxLength(200);
             entity.Property(e => e.Taluk).HasMaxLength(50);
             entity.Property(e => e.TeachingExperience).HasMaxLength(100);
+            entity.Property(e => e.TrustDocPath).HasMaxLength(500);
             entity.Property(e => e.TrustSocietyName).HasMaxLength(200);
             entity.Property(e => e.YearOfEstablishmentOfCollege).HasMaxLength(10);
             entity.Property(e => e.YearOfEstablishmentOfTrust).HasMaxLength(10);
