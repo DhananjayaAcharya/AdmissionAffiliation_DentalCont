@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Vehicle Registration & Documents";
     Layout = "~/Views/Shared/_CaLayout.cshtml";
+    var collegeName = Context.Session.GetString("CollegeName");
 }
 
 <style>
@@ -429,21 +430,40 @@
             opacity: 0.9;
             box-shadow: 0 4px 14px rgba(15,37,69,0.3);
         }
+
+    .college-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .page-header-text h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--accent-lt);
+    }
+
+    .form-card {
+        margin-left: 14rem;
+    }
 </style>
 <link rel="stylesheet" href="~/css/common-form.css" />
 <div class="page-shell">
     <div class="page-container">
         <!-- Page Header -->
         <div class="page-header">
-            @* <div class="header-eyebrow">Continuous Affiliation · Infrastructure</div> *@
-
-            <!-- Stacked Title and Subtitle on Left -->
-            <div class="header-content">
-                <div class="header-title">Vehicle Registration & Documents</div>
-                <div class="header-subtitle">Enter and manage vehicle details for transport and compliance</div>
+            <div class="emblem">
+                <i class="fas fa-hospital"></i>
             </div>
-
-            <div class="header-badge">Step 10 of 21</div>
+            <div class="page-header-text">
+                @if (!string.IsNullOrEmpty(collegeName))
+                {
+                    <div class="college-name">@collegeName</div>
+                }
+                <h1>Vehicle Details</h1>
+                @* <p>RGUHS · Affiliation Portal </p> *@
+            </div>
         </div>
 
         <!-- Form Card -->

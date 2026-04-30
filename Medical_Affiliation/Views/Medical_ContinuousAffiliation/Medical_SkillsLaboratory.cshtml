@@ -6,6 +6,7 @@
 }
 @{
     var courseLevel = Context.Session.GetString("CourseLevel");
+    var collegeName = Context.Session.GetString("CollegeName");
 }
 
 <style>
@@ -559,6 +560,23 @@
     .d-none {
         display: none !important;
     }
+    
+    .college-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .page-header-text h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .form-card {
+        margin-left: 14rem;
+    }
 </style>
 
 <link rel="stylesheet" href="~/css/common-form.css" />
@@ -578,7 +596,11 @@
                 <i class="fas fa-hospital"></i>
             </div>
             <div class="page-header-text">
-                <h1>Skills Laboratory</h1>
+                @if (!string.IsNullOrEmpty(collegeName))
+                {
+                    <div class="college-name">@collegeName</div>
+                }
+                <h4>Skills Laboratory</h4>
                 @* <p>RGUHS · Affiliation Portal </p> *@
             </div>
         </div>

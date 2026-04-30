@@ -41,6 +41,7 @@
             --sub: #3a4a68;
             --muted: #7a87a8;
             --card-shadow: 0 0 0 1px rgba(13,31,69,0.06),0 24px 64px rgba(13,31,69,0.14),0 6px 16px rgba(13,31,69,0.08);
+            --dental-header: linear-gradient(to right, #1A2980 0%, #2682d0 51%, #1A2980 100%);
         }
 
         html, body {
@@ -141,6 +142,12 @@
             min-width: 0
         }
 
+        .dental-hdr-txt{
+            display: flex;
+            flex-direction: column; /* or row */
+            gap: 12px;
+        }
+
         .hdr-uni {
             font-family: 'Playfair Display',Georgia,serif;
             font-size: 17px;
@@ -150,6 +157,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis
+        }
+
+        .dental-hdr-uni{
+            color: var(--white);
         }
 
         .hdr-sub {
@@ -182,6 +193,11 @@
                 color: var(--white);
                 transform: translateY(-1px)
             }
+            .dental-hdr{
+                background: var(--dental-header);
+                color: var(--white);
+                padding: 1.4rem 1.8rem;
+            }
 
         /* ── Main ── */
         .main {
@@ -203,7 +219,7 @@
             height: 100%;
             max-height: 720px;
             display: grid;
-            grid-template-columns: 46vw 1fr;
+            grid-template-columns: 55vw 1fr;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: var(--card-shadow);
@@ -340,6 +356,12 @@
                 transition: all .2s
             }
 
+            
+            .tb .dental-tn, .tb .dental-ts {
+                font-size: 1.2rem;
+            }
+
+
             .tb:hover {
                 color: var(--sub)
             }
@@ -406,7 +428,7 @@
 
         .pn {
             display: none;
-            padding: 20px 24px 18px;
+            padding: 10px 24px 18px;
             animation: pnIn .28s ease both
         }
 
@@ -529,7 +551,8 @@
 
         /* fields */
         .fg {
-            margin-bottom: 10px
+            margin-bottom: 10px;
+            padding-bottom: .3rem;
         }
 
         .fl {
@@ -896,6 +919,9 @@
             align-items: center;
             justify-content: space-between;
             background: var(--white)
+        }
+        .clg-form{
+                padding-inline: 4rem;
         }
 
         .ff-sec {
@@ -1309,11 +1335,11 @@
         </div> *@
 
         <!-- HEADER -->
-         <div class="hdr">
+         <div class="hdr dental-hdr">
           @*   <img src="@Url.Content("~/images/newLogo.jpeg")" alt="RGUHS" class="hdr-logo" /> *@
-            <div class="hdr-txt">
-                <div class="hdr-uni">Rajiv Gandhi University of Health Sciences, Karnataka</div>
-                <div class="hdr-sub">Admission &amp; Affiliation Management Portal · Bengaluru</div>
+            <div class="hdr-txt dental-hdr-txt">
+                <div class="hdr-uni dental-hdr-uni">Rajiv Gandhi University of Health Sciences, Karnataka</div>
+                <div class="hdr-sub">College Details Management Portal · Bengaluru</div>
             </div>
             <a asp-controller="MainDashboard" asp-action="Rguhsdashboard" class="hdr-home">
                 <i class="bi bi-house-door-fill"></i> Home
@@ -1331,19 +1357,19 @@
                     <div class="tab-bar">
                         <button class="tb tg on" id="tb-c" onclick="go('c')">
                             <i class="bi bi-building"></i>
-                            <span class="tn">College</span>
-                            <span class="ts">Affiliated</span>
+                            <span class="tn dental-tn">College</span>
+                            @* <span class="ts">Affiliated</span> *@
                         </button>
                         <div class="tdivl"></div>
                         <button class="tb tb2" id="tb-u" onclick="go('u')">
                             <i class="bi bi-building-check"></i>
-                            <span class="tn">University</span>
+                            <span class="tn dental-tn">University</span>
                             <span class="ts">Admin</span>
                         </button>
                         <div class="tdivl"></div>
                         <button class="tb tt" id="tb-l" onclick="go('l')">
                             <i class="bi bi-clipboard2-pulse"></i>
-                            <span class="tn">LIC / RGUHS</span>
+                            <span class="tn dental-tn">LIC / RGUHS</span>
                             <span class="ts">Inspection</span>
                         </button>
                     </div>
@@ -1374,7 +1400,7 @@
                                 <div class="err-box"><i class="bi bi-exclamation-circle-fill"></i> @TempData["LoginError"]</div>
                             }
 
-                            <form asp-action="Login" asp-controller="Login" method="post" novalidate autocomplete="off">
+                            <form asp-action="Login" asp-controller="Login" method="post" class="clg-form" novalidate autocomplete="off">
                                 @Html.AntiForgeryToken()
 
                                 <div class="fg focus-g">
@@ -1571,10 +1597,10 @@
 
                     </div><!-- /panels -->
 
-                    <div class="form-foot">
+                    @* <div class="form-foot">
                         <div class="ff-sec"><i class="bi bi-shield-fill-check"></i> 256-bit TLS Encrypted &nbsp;·&nbsp; GIGW Compliant</div>
                         <div class="ff-copy">&copy; @DateTime.Now.Year RGUHS Karnataka</div>
-                    </div>
+                    </div> *@
                 </div><!-- /form-side -->
                 <!-- ══ RIGHT: VISUAL SIDE ══ -->
                 <div class="visual-side">

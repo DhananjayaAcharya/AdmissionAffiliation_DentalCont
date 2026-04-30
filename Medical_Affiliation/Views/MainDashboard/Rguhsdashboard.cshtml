@@ -63,6 +63,34 @@
             --shadow-md: 0 4px 20px rgba(6,13,31,.10), 0 2px 8px rgba(6,13,31,.06);
             --shadow-lg: 0 12px 40px rgba(6,13,31,.14), 0 4px 16px rgba(6,13,31,.08);
             --shadow-xl: 0 24px 64px rgba(6,13,31,.20), 0 8px 24px rgba(6,13,31,.10);
+            --dental-header-linear: linear-gradient(to bottom, #002e5d 0%, #002e5d 50%, #2774ae 100%);
+            --dental-track-bar: #2d3944;
+        }
+
+        .btn-grad {
+                background-image: linear-gradient(to right, #1A2980 0%, #2682d0 51%, #1A2980 100%);
+        }
+
+        .btn-grad {
+            margin: 10px;
+            padding: 10px 15px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+                box-shadow: 0 0 20px #7e849c;
+            border-radius: 10px;
+            display: block;
+            outline: none;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-grad:hover {
+            background-position: right center;
+            color: #fff;
+            text-decoration: none;
         }
 
         *, *::before, *::after {
@@ -161,7 +189,7 @@
 
         /* ══════════════ HEADER ══════════════ */
         .site-header {
-            background: var(--navy-800);
+            background: var(--dental-header-linear);
             position: relative;
             overflow: hidden;
         }
@@ -369,7 +397,7 @@
 
         /* ══════════════ TICKER ══════════════ */
         .ticker-bar {
-            background: var(--navy-700);
+            background: var(--dental-track-bar);
             display: flex;
             align-items: stretch;
             overflow: hidden;
@@ -1419,7 +1447,7 @@
 
         /* ══════════════ FOOTER ══════════════ */
         .site-footer {
-            background: var(--navy-900);
+            background: var(--dental-header-linear);
             border-top: 2px solid var(--gold-400);
         }
 
@@ -1757,7 +1785,7 @@
 <body>
 
     <!-- ════ UTILITY BAR ════ -->
-    <div class="util-bar">
+    @* <div class="util-bar">
         <div class="util-inner">
             <div class="util-links">
                 <a href="https://www.rguhs.ac.in" target="_blank"><i class="bi bi-globe2"></i><span>www.rguhs.ac.in</span></a>
@@ -1771,7 +1799,7 @@
                 <select class="lang-sel"><option>English</option><option>ಕನ್ನಡ</option></select>
             </div>
         </div>
-    </div>
+    </div> *@
 
     <!-- ════ HEADER ════ -->
     <header class="site-header">
@@ -1779,22 +1807,22 @@
             <div class="header-rule"></div>
             <img src="~/images/newLogo.jpeg" alt="RGUHS Logo" class="university-logo" />
             <div class="header-text">
-                <div class="univ-eyebrow">Government of Karnataka</div>
                 <div class="univ-name">Rajiv Gandhi University of Health Sciences, Karnataka</div>
                 <div class="univ-sub">
                     <i class="bi bi-geo-alt-fill"></i>
                     4th 'T' Block, Jayanagar, Bangalore – 560 041 &nbsp;·&nbsp; Established 1996
                 </div>
+                <div class="univ-eyebrow">Government of Karnataka</div>
                 
             </div>
             <div class="header-cta">
-                <a asp-controller="MainDashboard" asp-action="MultiLogin" class="btn-portal" target="_blank">
+                <a asp-controller="MainDashboard" asp-action="MultiLogin" class="btn-grad" target="_blank">
                     <i class="bi bi-box-arrow-in-right"></i> Login to Portal
                 </a>
-                <div class="header-status">
+                @* <div class="header-status">
                     <div class="pulse-dot"></div>
                     Admission &amp; Affiliation System — Live
-                </div>
+                </div> *@
             </div>
         </div>
     </header>
@@ -1806,9 +1834,9 @@
         <div class="ticker-track">
             <div class="ticker-inner">
                 <span class="t-item"><i class="bi bi-megaphone-fill"></i><a href="http://www.rguhs.ac.in/">Visit Official RGUHS Website</a></span>
-                <span class="t-item"><i class="bi bi-info-circle-fill"></i><a href="https://rguhsaca.karnataka.gov.in/admissionaffiliation/MainDashboard/MultiLogin">Medical College Details Submission Has Commenced for Existing Colleges</a></span>
+                <span class="t-item"><i class="bi bi-info-circle-fill"></i><a href="https://rguhsaca.karnataka.gov.in/admissionaffiliation/MainDashboard/MultiLogin">Dental College Details Submission Has Commenced for Existing Colleges</a></span>
                 <span class="t-item"><i class="bi bi-megaphone-fill"></i><a href="http://www.rguhs.ac.in/">Visit Official RGUHS Website</a></span>
-                <span class="t-item"><i class="bi bi-info-circle-fill"></i><a href="https://rguhsaca.karnataka.gov.in/admissionaffiliation/MainDashboard/MultiLogin">Medical College Details Submission Has Commenced for Existing Colleges</a></span>
+                <span class="t-item"><i class="bi bi-info-circle-fill"></i><a href="https://rguhsaca.karnataka.gov.in/admissionaffiliation/MainDashboard/MultiLogin">Dental College Details Submission Has Commenced for Existing Colleges</a></span>
             </div>
         </div>
     </div>
@@ -1842,11 +1870,11 @@
                 </div>
             </div>
             <div class="carousel-item">
-                <img src="~/images/campus2.jpg" class="carousel-img" alt="Medical Education"
+                <img src="~/images/campus2.jpg" class="carousel-img" alt="Dental Education"
                      onerror="this.src='https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=1600&q=80'" />
                 <div class="carousel-caption-custom">
-                    <div class="cc-tag"><i class="bi bi-heart-pulse-fill"></i> Medical</div>
-                    <div class="cc-title">Excellence in Medical Education</div>
+                    <div class="cc-tag"><i class="bi bi-heart-pulse-fill"></i> Dental</div>
+                    <div class="cc-title">Excellence in Dental Education</div>
                     <div class="cc-sub">Shaping the future of healthcare across Karnataka</div>
                 </div>
             </div>
@@ -2097,7 +2125,7 @@
                     <div class="foot-monogram">RG</div>
                     <div class="foot-name">Rajiv Gandhi University of Health Sciences<span>Karnataka, India — Estd. 1996</span></div>
                 </div>
-                <p class="foot-desc">RGUHS is the apex body for health sciences education in Karnataka, overseeing affiliated medical, dental, nursing, pharmacy and allied health colleges. Recognised by UGC, NMC &amp; ACU. NAAC Accredited.</p>
+                <p class="foot-desc">RGUHS is the apex body for health sciences education in Karnataka, overseeing affiliated Dental, dental, nursing, pharmacy and allied health colleges. Recognised by UGC, NMC &amp; ACU. NAAC Accredited.</p>
             </div>
             <div class="foot-col">
                 <h5>Admissions</h5>

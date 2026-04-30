@@ -1,8 +1,9 @@
 ﻿@model MedicalVm
-
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Trust Institution Details";
     Layout = "~/Views/Shared/_CaLayout.cshtml";
+    var collegeName = HttpContextAccessor.HttpContext.Session.GetString("CollegeName");
 }
 
 <!DOCTYPE html>
@@ -176,6 +177,7 @@
         .form-wrap {
             max-width: 1240px;
             margin: 32px auto;
+                margin-left: 14rem;
             padding: 5rem 12px 0px;
         }
 
@@ -624,6 +626,19 @@
                 text-decoration: none;
                 transition: opacity 0.15s, box-shadow 0.15s;
             }
+
+            .college-name {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #fff;
+                margin-bottom: 4px;
+            }
+
+            .page-header-text h4 {
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--accent-lt);
+            }
     </style>
 </head>
 <body>
@@ -633,7 +648,11 @@
             <i class="fas fa-hospital"></i>
         </div>
         <div class="page-header-text">
-            <h1>Trust Institution Details</h1>
+            @if (!string.IsNullOrEmpty(collegeName))
+            {
+                <div class="college-name">@collegeName</div>
+            }
+            <h4>Trust Institution Details</h4>
         </div>
     </div>
 
@@ -712,7 +731,7 @@
                         </div>
                         <div>
                             <label asp-for="KncCertificateNumber">
-                                <i class="fas fa-award"></i>KMC Certificate Number
+                                <i class="fas fa-award"></i>KSDC Certificate Number
                             </label>
                             <input asp-for="KncCertificateNumber" maxlength="50" />
                             <span asp-validation-for="KncCertificateNumber" class="text-danger"></span>
@@ -1092,7 +1111,7 @@
 
                         @* KNC Certificate *@
                         <div>
-                            <label><i class="fas fa-medal"></i>KMC Certificate</label>
+                            <label><i class="fas fa-medal"></i>KSDC Certificate</label>
                             <div class="file-row">
                                 <input id="KncCertificateFile" name="KncCertificateFile" type="file" accept=".pdf" />
                                 @if (Model.InstitutionId > 0)

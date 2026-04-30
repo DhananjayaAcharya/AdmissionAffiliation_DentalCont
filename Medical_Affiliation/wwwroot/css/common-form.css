@@ -49,6 +49,7 @@ body {
     padding: 1rem 2rem .6rem;
     display: flex;
     align-items: center;
+    color: white;
     position: fixed;
     top:0;
     width: 100%;
@@ -134,8 +135,12 @@ body {
     padding: 5rem 12px 0px;
 }
 
-.form-card{
+.form-wrap {
+    margin-left: 14rem;
+}
+.form-card {
     padding: 7rem 24px 2rem;
+    margin-left: 14rem !important;
 }
 /* Section label */
 .section-label {
@@ -143,6 +148,23 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
+}
+
+.page-container .page-header .page-header-text .college-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.page-container .page-header .page-header-text h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.form-card {
+    margin-left: 14rem;
 }
 
 .section-label-line {

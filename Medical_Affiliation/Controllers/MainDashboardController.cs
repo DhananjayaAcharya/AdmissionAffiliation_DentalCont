@@ -48,22 +48,22 @@ namespace Medical_Affiliation.Controllers
 
         // GET: College/GetData
         [HttpGet]
-        public async Task<IActionResult> Rguhsdashboard(string faculty = "ALL", string search = "")
+        public async Task<IActionResult> Rguhsdashboard(string faculty = "2", string search = "")
         {
             var vm = new RguhsDashboardViewModel
             {
-                ActiveFaculty = faculty ?? "ALL",
+                ActiveFaculty = faculty ?? "2",
                 SearchTerm = search ?? ""
             };
 
             // ── 1. Load all faculties ─────────────────────────────────────
             var facultyEntities = await _context.Faculties
-                .Where(f => f.FacultyId == 1)
+                .Where(f => f.FacultyId == 2)
                 .OrderBy(f => f.FacultyId)
                 .ToListAsync();
 
             var allColleges = await _context.AffiliationCollegeMasters
-                .Where(e => e.FacultyCode == "1")
+                .Where(e => e.FacultyCode == "2")
                 .OrderBy(c => c.CollegeName)
                 .ToListAsync();
 
@@ -166,14 +166,14 @@ namespace Medical_Affiliation.Controllers
             var captcha = new Random().Next(10000, 99999).ToString();
             HttpContext.Session.SetString("CaptchaCode", captcha);
 
-            var colleges = new[] { "M016", "M011", "M019", "Test1" };
+            //var colleges = new[] { "M016", "M011", "M019", "Test1" };
 
             var model = new AdmissionLoginViewModel
             {
 
-                FacultyId = "1",
+                FacultyId = "2",
                 Faculties = _context.Faculties
-                .Where(c => c.FacultyId == 1)
+                .Where(c => c.FacultyId == 2)
                 .Select(f => new SelectListItem
                 {
                     Value = f.FacultyId.ToString(),
@@ -182,7 +182,7 @@ namespace Medical_Affiliation.Controllers
                 }).ToList(),
 
                 Colleges = _context.AffiliationCollegeMasters
-                .Where(c => c.FacultyCode == "1" && colleges.Contains(c.CollegeCode))
+                .Where(c => c.FacultyCode == "2")
                 .Select(c => new SelectListItem
                 {
                     Value = c.CollegeCode,

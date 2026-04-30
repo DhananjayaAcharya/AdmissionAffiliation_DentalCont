@@ -16,6 +16,8 @@
         .Distinct()
         .ToList();
 
+    var collegeName = HttpContextAccessor.HttpContext.Session.GetString("CollegeName");
+
 
 }
 
@@ -206,6 +208,24 @@
     .section-block-body {
         padding: 0;
         overflow-x: auto;
+    }
+
+    
+    .college-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .page-header-text h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .form-card {
+        margin-left: 14rem;
     }
 
     /* ── Table ── */
@@ -473,12 +493,12 @@
 <div class="page-shell">
     <div class="page-container">
 
-        @if (TempData["SuccessMessage"] != null)
+        @* @if (TempData["SuccessMessage"] != null)
         {
             <div style="background:#eaf7ef; border:1px solid #a8d5b5; border-radius:6px; padding:10px 16px; margin-bottom:16px; font-size:0.82rem; color:#1a6b3a;">
                 &#10003; @TempData["SuccessMessage"]
             </div>
-        }
+        } *@
 
         <!-- Header -->
         @* <div class="page-header">
@@ -492,6 +512,10 @@
                 <i class="fas fa-hospital"></i>
             </div>
             <div class="page-header-text">
+                @if (!string.IsNullOrEmpty(collegeName))
+                {
+                    <div class="college-name">@collegeName</div>
+                }
                 <h1>Principal Details</h1>
                 @* <p>RGUHS · Affiliation Portal </p> *@
             </div>

@@ -1,8 +1,9 @@
 ﻿@model Medical_TrustMemberDetailsListVM
-
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewBag.Title = "Trust Member Details";
     Layout = "~/Views/Shared/_CaLayout.cshtml";
+    var collegeName = HttpContextAccessor.HttpContext.Session.GetString("CollegeName");
 }
 
 <style>
@@ -465,6 +466,22 @@
     .btn-next:hover {
         opacity: 0.9;
     }
+
+    .college-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .page-header-text h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+    }
+    .form-card{
+        margin-left: 14rem;
+    }
 </style>
 <link rel="stylesheet" href="~/css/common-form.css" />
 
@@ -477,7 +494,11 @@
                 <i class="fas fa-book-open"></i>
             </div>
             <div class="page-header-text">
-                <h1 class="header-title">Trust Member Details</h1>
+                @if (!string.IsNullOrEmpty(collegeName))
+                {
+                    <div class="college-name">@collegeName</div>
+                }
+                <h4 class="header-title">Trust Member Details</h4>
             </div>
         </div>
 
