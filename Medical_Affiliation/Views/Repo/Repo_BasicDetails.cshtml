@@ -25,10 +25,11 @@
         --accent: #06b6d4;
         --success: #10b981;
         --warn: #f59e0b;
-        --surface: #f8fafc;
+        --surface: transparent;
+        --all-text: white;
         --card: #ffffff;
         --border: #e2e8f0;
-        --border-focus: #2563eb;
+        --border-focus: #e2e8f0;
         --text-1: #0f172a;
         --text-2: #475569;
         --text-3: #94a3b8;
@@ -178,6 +179,7 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        background: #c2bdba;
     }
 
     /* ─────────────── STICKY HEADER / PROGRESS ─────────────── */
@@ -332,7 +334,8 @@
     .page-title-row {
         margin-bottom: .5rem;
         display: flex;
-        align-items: flex-end;
+        align-items: center;
+        justify-content: center;
         gap: 1rem;
     }
 
@@ -353,7 +356,7 @@
 
     /* ─────────────── FORM CARD ─────────────── */
     .form-card {
-        background: var(--card);
+        background: #25343d;
         border-radius: var(--radius-lg);
         border: 1px solid var(--border);
         box-shadow: var(--shadow-md);
@@ -363,7 +366,7 @@
     /* Section groups inside card */
     .form-section {
         padding: 2rem 0.8rem 1.5rem;
-        border-bottom: 1px solid var(--border);
+        /* border-bottom: 1px solid var(--border); */
     }
 
         .form-section:last-child {
@@ -374,20 +377,21 @@
         display: flex;
         align-items: center;
         gap: .6rem;
-        font-size: .7rem;
-        font-weight: 700;
-        letter-spacing: .1em;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
         text-transform: uppercase;
-        color: var(--text-3);
+        color: var(--all-text);
         margin-bottom: 1.25rem;
+        justify-content: center;
     }
 
-        .section-label::after {
+        /* .section-label::after {
             content: '';
             flex: 1;
             height: 1px;
             background: var(--border);
-        }
+        } */
 
     .section-icon {
         width: 28px;
@@ -398,6 +402,7 @@
         place-items: center;
         font-size: .85rem;
         flex-shrink: 0;
+        color: #25343d;
     }
 
     /* Grid helpers */
@@ -421,10 +426,10 @@
     }
 
         .field label {
-            font-size: .8rem;
-            font-weight: 600;
-            color: var(--text-2);
-            letter-spacing: .01em;
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--all-text);
+            letter-spacing: 0.05em;
         }
 
             .field label .req {
@@ -437,8 +442,8 @@
         .field select {
             font-family: 'DM Sans', sans-serif;
             font-size: .9rem;
-            color: var(--text-1);
-            background: var(--surface);
+            color: #fff;
+            background: #25343d;
             border: 1.5px solid var(--border);
             border-radius: var(--radius-sm);
             padding: .65rem .9rem;
@@ -460,20 +465,27 @@
             .field textarea:focus,
             .field select:focus {
                 border-color: var(--border-focus);
-                background: #fff;
+                /* background: #fff; */
                 box-shadow: 0 0 0 3px rgba(37,99,235,.1);
             }
 
         .field input[readonly] {
-            background: #f1f5f9;
-            color: var(--text-2);
+            background: transparent;
+            color: #b2b5b8;
             cursor: not-allowed;
+            outline: none;
+            border: 1.5px solid white;
         }
 
         .field textarea {
             resize: vertical;
             min-height: 90px;
             line-height: 1.55;
+            outline: none;
+            background: transparent;
+            color: #fff;
+            outline: none;
+            border: 1.5px solid white;
         }
 
         .field .hint {
@@ -497,7 +509,7 @@
             font-size: .82rem;
             padding: .55rem .9rem;
             cursor: pointer;
-            color: var(--text-2);
+            /* color: var(--text-2); */
         }
 
             .file-upload-wrap input[type="file"]::-webkit-file-upload-button {
@@ -1134,8 +1146,16 @@
             document.getElementById("otherDegreeContainer").style.display =
                 document.getElementById("degreeOther").checked ? "block" : "none";
         }
-        document.getElementById("degreeOther").addEventListener("change", toggleOtherDegree);
-        window.addEventListener("DOMContentLoaded", toggleOtherDegree);
+
+
+        const degreeOther = document.getElementById("degreeOther");
+
+        if (degreeOther) {
+            degreeOther.addEventListener("change", toggleOtherDegree);
+
+            // Run once on load only if element exists
+            window.addEventListener("DOMContentLoaded", toggleOtherDegree);
+        }
 
         /* ── District → Taluk cascade ──
            ROOT CAUSE FIX: never set talukDropdown.disabled = true.
@@ -1149,7 +1169,7 @@
             const talukDropdown    = document.getElementById("talukDropdown");      // visual only
             const talukHidden      = document.getElementById("SelectedTalukId_hidden"); // always posts
             const preselectedTaluk = "@Model.SelectedTalukId";
-
+            debugger;
             // Keep hidden input in sync whenever the visual dropdown changes
             talukDropdown.addEventListener("change", function () {
                 talukHidden.value = this.value;
