@@ -77,7 +77,7 @@ namespace Medical_Affiliation.Controllers
                     .OrderBy(d => d.DistrictName)
                     .Select(d => new SelectListItem
                     {
-                        Value = d.DistrictName,
+                        Value = d.DistrictId.ToString(),
                         Text = d.DistrictName
                     }).ToList(),
 
@@ -305,6 +305,59 @@ namespace Medical_Affiliation.Controllers
             // logic to go forward to next page/step
             return RedirectToAction("Repo_BasicDetails");
         }
+
+
+
+        public IActionResult ViewTrustDoc(string id)
+        {
+            var doc = _context.MedicalInstituteDetails
+                .FirstOrDefault(x => x.CollegeCode == id);
+
+            if (doc == null ||
+                string.IsNullOrEmpty(doc.TrustDocPath) ||
+                !System.IO.File.Exists(doc.TrustDocPath))
+                return NotFound("File not found");
+
+            var fileName = Path.GetFileName(doc.TrustDocPath);
+
+            // 🔥 Detect content type
+            var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(doc.TrustDocPath, out string contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            // 👀 IMPORTANT: INLINE VIEW (NOT DOWNLOAD)
+            Response.Headers["Content-Disposition"] = $"inline; filename=\"{fileName}\"";
+
+            return PhysicalFile(doc.TrustDocPath, contentType);
+        }
+
+        public IActionResult ViewEstDoc(string id)
+        {
+            var doc = _context.MedicalInstituteDetails
+                .FirstOrDefault(x => x.CollegeCode == id);
+
+            if (doc == null ||
+                string.IsNullOrEmpty(doc.EstablishmentDocPath) ||
+                !System.IO.File.Exists(doc.TrustDocPath))
+                return NotFound("File not found");
+
+            var fileName = Path.GetFileName(doc.EstablishmentDocPath);
+
+            // 🔥 Detect content type
+            var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(doc.EstablishmentDocPath, out string contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            // 👀 IMPORTANT: INLINE VIEW (NOT DOWNLOAD)
+            Response.Headers["Content-Disposition"] = $"inline; filename=\"{fileName}\"";
+
+            return PhysicalFile(doc.TrustDocPath, contentType);
+        }
+
 
 
         [HttpGet]
