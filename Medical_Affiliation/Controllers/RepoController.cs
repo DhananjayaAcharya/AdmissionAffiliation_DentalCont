@@ -73,21 +73,21 @@ namespace Medical_Affiliation.Controllers
                 SelectedTalukId = ni?.Taluk ?? collegeMaster?.TalukId,
 
                 DistrictDropdownList = _context.DistrictMasters
-                    .Where(d => d.DistrictName != null && d.DistrictName != "")
-                    .OrderBy(d => d.DistrictName)
-                    .Select(d => new SelectListItem
-                    {
-                        Value = d.DistrictId.ToString(),
-                        Text = d.DistrictName
-                    }).ToList(),
+                            .Where(d => d.DistrictName != null && d.DistrictName != "")
+                            .OrderBy(d => d.DistrictName)
+                            .Select(d => new SelectListItem
+                            {
+                                Value = d.DistrictId,   // ← must be the varchar "D04", not an int
+                                Text = d.DistrictName
+                            }).ToList(),
 
                 TalukDropdownList = _context.TalukMasters
-                    .OrderBy(t => t.TalukName)
-                    .Select(t => new SelectListItem
-                    {
-                        Value = t.TalukId.ToString(),
-                        Text = t.TalukName
-                    }).ToList(),
+                        .OrderBy(t => t.TalukName)
+                        .Select(t => new SelectListItem
+                        {
+                            Value = t.TalukId,   // ← varchar "T001"
+                            Text = t.TalukName
+                        }).ToList(),
             };
 
             ViewBag.Courses = _context.MstCourses
@@ -98,25 +98,15 @@ namespace Medical_Affiliation.Controllers
             return View(viewModel);
         }
         [HttpGet]
-        public IActionResult GetTaluksByDistrict(string districtName)
+        public IActionResult GetTaluksByDistrict(string districtId)
         {
-            if (string.IsNullOrEmpty(districtName))
+            if (string.IsNullOrEmpty(districtId))
                 return Json(new List<object>());
 
             try
             {
-                // Step 1: Check what DistrictMasters has for this name
-                var district = _context.DistrictMasters
-                    .Where(d => d.DistrictName == districtName)
-                    .Select(d => new { d.DistrictId, d.DistrictName })
-                    .FirstOrDefault();
-
-                if (district == null)
-                    return Json(new { error = $"No district found with name '{districtName}'" });
-
-                // Step 2: Check TalukMasters using that DistrictId
                 var taluks = _context.TalukMasters
-                    .Where(t => t.DistrictId == district.DistrictId)  // join via int FK
+                    .Where(t => t.DistrictId == districtId)
                     .OrderBy(t => t.TalukName)
                     .Select(t => new
                     {
@@ -129,11 +119,7 @@ namespace Medical_Affiliation.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    error = ex.Message,
-                    inner = ex.InnerException?.Message
-                });
+                return Json(new { error = ex.Message, inner = ex.InnerException?.Message });
             }
         }
 
@@ -278,7 +264,9 @@ namespace Medical_Affiliation.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("Repo_UGPG");
+            //return RedirectToAction("Repo_UGPG");
+
+            return RedirectToAction("Repo_BasicDetails");
         }
 
         [HttpGet]
@@ -340,25 +328,23 @@ namespace Medical_Affiliation.Controllers
 
             if (doc == null ||
                 string.IsNullOrEmpty(doc.EstablishmentDocPath) ||
-                !System.IO.File.Exists(doc.TrustDocPath))
+                !System.IO.File.Exists(doc.EstablishmentDocPath))
                 return NotFound("File not found");
 
             var fileName = Path.GetFileName(doc.EstablishmentDocPath);
 
-            // 🔥 Detect content type
             var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
             if (!provider.TryGetContentType(doc.EstablishmentDocPath, out string contentType))
             {
                 contentType = "application/octet-stream";
             }
 
-            // 👀 IMPORTANT: INLINE VIEW (NOT DOWNLOAD)
             Response.Headers["Content-Disposition"] = $"inline; filename=\"{fileName}\"";
 
-            return PhysicalFile(doc.TrustDocPath, contentType);
+            return PhysicalFile(doc.EstablishmentDocPath, contentType);
         }
 
-
+        //======= UG/PG Intake Details ====================================
 
         [HttpGet]
         public async Task<IActionResult> Repo_UGPG()
@@ -524,6 +510,40 @@ namespace Medical_Affiliation.Controllers
             return RedirectToAction(nameof(Repo_UGPG));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EditFacultyIntake(int id, string intakeDetails,
+        string freshOrIncrease, string courseCode,
+        IFormFile rghsFile, IFormFile dciFile, IFormFile ksdcFile, IFormFile gokFile)
+        {
+            var row = await _context.UgandPgrepositories.FindAsync(id);
+            if (row == null) return Json(new { success = false, message = "Record not found." });
+
+            row.IntakeDetails = intakeDetails;
+            row.FreshOrIncrease = freshOrIncrease;
+            row.Course = courseCode;
+
+            async Task<byte[]> ToBytes(IFormFile file)
+            {
+                if (file == null || file.Length == 0) return null;
+                using var ms = new MemoryStream();
+                await file.CopyToAsync(ms);
+                return ms.ToArray();
+            }
+
+            var rghs = await ToBytes(rghsFile);
+            var dci = await ToBytes(dciFile);
+            var ksdc = await ToBytes(ksdcFile);
+            var gok = await ToBytes(gokFile);
+
+            if (rghs != null) row.Rguhsnotification = rghs;
+            if (dci != null) row.Inc = dci;
+            if (ksdc != null) row.Knmc = ksdc;
+            if (gok != null) row.Gok = gok;
+
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
+        }
+
         [HttpGet]
         public IActionResult Repo_ManageDesignationIntake()
         {
@@ -597,6 +617,7 @@ namespace Medical_Affiliation.Controllers
             return RedirectToAction("Repo_FacultyDetails");
         }
 
+        //================================================================================
 
         [HttpGet]
         public IActionResult Repo_Affiliated_YearwiseMaterials()

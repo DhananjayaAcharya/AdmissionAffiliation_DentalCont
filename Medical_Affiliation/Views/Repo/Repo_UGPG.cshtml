@@ -25,26 +25,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] — RGUHS Portal</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-    <!-- Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
-    <!-- jQuery (needed for existing AJAX logic) -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-
-    <!-- jQuery Validation (for asp-validation) -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* ===== TOKENS ===== */
         :root {
             --navy: #0d1b3e;
             --navy-mid: #1a2f5f;
@@ -59,13 +50,12 @@
             --text-muted: #6b7a99;
             --danger: #dc2626;
             --success: #16a34a;
+            --warn: #d97706;
             --radius: 14px;
             --shadow-sm: 0 2px 8px rgba(13,27,62,.07);
             --shadow-md: 0 6px 24px rgba(13,27,62,.10);
-            --shadow-lg: 0 16px 48px rgba(13,27,62,.14);
         }
 
-        /* ===== RESET & BASE ===== */
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
@@ -85,7 +75,7 @@
             flex-direction: column;
         }
 
-        /* ===== HEADER BAR ===== */
+        /* HEADER */
         .portal-header {
             background: var(--navy);
             color: #fff;
@@ -121,12 +111,6 @@
                 font-weight: 700;
             }
 
-            .portal-header .brand-text {
-                display: flex;
-                flex-direction: column;
-                line-height: 1.1;
-            }
-
             .portal-header .brand-title {
                 font-family: 'Playfair Display', serif;
                 font-size: 1rem;
@@ -156,33 +140,21 @@
                     gap: 5px;
                 }
 
-        /* ===== LAYOUT ===== */
+        /* LAYOUT */
         .page-shell {
             display: flex;
             flex: 1;
         }
 
-        /* ===== SIDEBAR ===== */
-        .sidebar-wrap {
-            width: 260px;
-            flex-shrink: 0;
-            background: var(--navy-mid);
-            min-height: calc(100vh - 64px);
-            position: sticky;
-            top: 64px;
-            align-self: flex-start;
-        }
-
-        /* ===== MAIN CONTENT ===== */
         .content-area {
             flex: 1;
             padding: 2rem 2.5rem;
-            max-width: 1280px;
+            max-width: 1440px;
             margin: 0 auto;
             width: 100%;
         }
 
-        /* ===== PAGE TITLE SECTION ===== */
+        /* PAGE TITLE */
         .page-title-block {
             display: flex;
             align-items: flex-end;
@@ -213,7 +185,7 @@
                     color: var(--gold);
                 }
 
-        /* ===== PROGRESS STEPPER ===== */
+        /* STEPPER */
         .stepper-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -321,15 +293,15 @@
             color: var(--success);
         }
 
-        /* ===== GRID ===== */
+        /* GRID */
         .main-grid {
             display: grid;
-            grid-template-columns: 420px 1fr;
+            grid-template-columns: 400px 1fr;
             gap: 1.5rem;
             align-items: start;
         }
 
-        /* ===== CARD ===== */
+        /* PANEL */
         .panel {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -363,7 +335,7 @@
             padding: 1.5rem;
         }
 
-        /* ===== FORM CONTROLS ===== */
+        /* FORM */
         .form-label {
             font-size: .78rem;
             font-weight: 600;
@@ -395,7 +367,7 @@
                 color: #b0b9cc;
             }
 
-        /* ===== DIVIDER ===== */
+        /* SECTION DIVIDER */
         .section-divider {
             display: flex;
             align-items: center;
@@ -412,15 +384,14 @@
                 white-space: nowrap;
             }
 
-            .section-divider::before,
-            .section-divider::after {
+            .section-divider::before, .section-divider::after {
                 content: '';
                 flex: 1;
                 height: 1px;
                 background: var(--border);
             }
 
-        /* ===== FILE UPLOAD ===== */
+        /* FILE UPLOAD */
         .upload-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -482,7 +453,7 @@
             display: none !important;
         }
 
-        /* ===== PRIMARY BUTTON ===== */
+        /* BUTTONS */
         .btn-official {
             background: var(--navy);
             color: #fff;
@@ -529,7 +500,31 @@
                 color: #fff;
             }
 
-        /* ===== TABLE ===== */
+        /* ALERTS */
+        .alert-custom {
+            border-radius: 8px;
+            padding: .65rem 1rem;
+            font-size: .82rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+            .alert-custom.danger {
+                background: #fef2f2;
+                color: var(--danger);
+                border: 1px solid #fecaca;
+            }
+
+            .alert-custom.success {
+                background: #f0fdf4;
+                color: var(--success);
+                border: 1px solid #bbf7d0;
+            }
+
+        /* TABLE */
         .table-panel-header {
             padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border);
@@ -555,6 +550,12 @@
                 border-radius: 20px;
             }
 
+        .table-scroll-wrap {
+            overflow-x: auto;
+            max-height: 560px;
+            overflow-y: auto;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -573,10 +574,11 @@
                 white-space: nowrap;
                 position: sticky;
                 top: 0;
+                z-index: 2;
             }
 
             .data-table tbody td {
-                padding: .7rem 1rem;
+                padding: .65rem .85rem;
                 border-bottom: 1px solid var(--border);
                 color: var(--text-main);
                 vertical-align: middle;
@@ -590,28 +592,87 @@
                 background: #f4f7ff;
             }
 
-        .badge-fresh {
-            background: #dcfce7;
-            color: #15803d;
-            font-size: .65rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 20px;
-            letter-spacing: .4px;
-            text-transform: uppercase;
+            /* Edit mode row highlight */
+            .data-table tbody tr.editing-row td {
+                background: #fffbeb !important;
+            }
+
+            .data-table tbody tr.editing-row {
+                outline: 2px solid var(--gold);
+                outline-offset: -1px;
+            }
+
+        /* Inline edit inputs */
+        .edit-input {
+            font-size: .78rem;
+            border: 1.5px solid var(--blue-light);
+            border-radius: 6px;
+            padding: .3rem .5rem;
+            background: #fff;
+            color: var(--text-main);
+            width: 100%;
+            min-width: 60px;
+            font-family: 'DM Sans', sans-serif;
         }
 
-        .badge-increase {
-            background: #fef3c7;
-            color: #92400e;
-            font-size: .65rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 20px;
-            letter-spacing: .4px;
-            text-transform: uppercase;
+            .edit-input:focus {
+                outline: none;
+                border-color: var(--blue);
+                box-shadow: 0 0 0 2px rgba(29,78,216,.12);
+            }
+
+        .edit-select {
+            font-size: .78rem;
+            border: 1.5px solid var(--blue-light);
+            border-radius: 6px;
+            padding: .3rem .5rem;
+            background: #fff;
+            color: var(--text-main);
+            font-family: 'DM Sans', sans-serif;
+            width: 100%;
         }
 
+        /* Inline file upload in edit mode */
+        .inline-upload-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: .68rem;
+            font-weight: 600;
+            color: var(--blue);
+            background: #eff4ff;
+            border: 1px solid #c7d7fd;
+            border-radius: 6px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+            .inline-upload-label:hover {
+                background: var(--blue);
+                color: #fff;
+                border-color: var(--blue);
+            }
+
+        .inline-file-name {
+            display: block;
+            font-size: .62rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-style: italic;
+            max-width: 90px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+            .inline-file-name.chosen {
+                color: var(--blue);
+                font-style: normal;
+            }
+
+        /* View / doc buttons */
         .doc-btn {
             background: #eff4ff;
             color: var(--blue);
@@ -638,6 +699,70 @@
             font-size: .7rem;
         }
 
+        /* Action buttons in table */
+        .btn-edit {
+            background: #fffbeb;
+            color: var(--warn);
+            border: 1px solid #fde68a;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all .18s;
+        }
+
+            .btn-edit:hover {
+                background: var(--warn);
+                color: #fff;
+                border-color: var(--warn);
+            }
+
+        .btn-save-row {
+            background: #f0fdf4;
+            color: var(--success);
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            transition: all .18s;
+        }
+
+            .btn-save-row:hover {
+                background: var(--success);
+                color: #fff;
+                border-color: var(--success);
+            }
+
+        .btn-cancel-row {
+            background: #f8fafc;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            transition: all .18s;
+            margin-top: 4px;
+        }
+
+            .btn-cancel-row:hover {
+                background: var(--text-muted);
+                color: #fff;
+            }
+
         .btn-delete {
             background: #fef2f2;
             color: var(--danger);
@@ -659,31 +784,55 @@
                 border-color: var(--danger);
             }
 
-        /* ===== ALERT ===== */
-        .alert-custom {
-            border-radius: 8px;
-            padding: .65rem 1rem;
-            font-size: .82rem;
-            font-weight: 500;
+        /* Action cell layout */
+        .action-cell {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 1rem;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 90px;
         }
 
-            .alert-custom.danger {
-                background: #fef2f2;
-                color: var(--danger);
-                border: 1px solid #fecaca;
-            }
+        .action-row-btns {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
 
-            .alert-custom.success {
-                background: #f0fdf4;
-                color: var(--success);
-                border: 1px solid #bbf7d0;
-            }
+        /* Badges */
+        .badge-fresh {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
 
-        /* ===== NAVIGATION FOOTER ===== */
+        .badge-increase {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
+
+        .badge-additional {
+            background: #ede9fe;
+            color: #5b21b6;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
+
+        /* Nav footer */
         .nav-footer {
             display: flex;
             justify-content: space-between;
@@ -693,7 +842,7 @@
             border-top: 1px solid var(--border);
         }
 
-        /* ===== EMPTY STATE ===== */
+        /* Empty state */
         .empty-state {
             padding: 2.5rem;
             text-align: center;
@@ -710,7 +859,12 @@
                 font-size: .82rem;
             }
 
-        /* ===== RESPONSIVE ===== */
+        /* Saving spinner overlay on row */
+        .row-saving {
+            opacity: .6;
+            pointer-events: none;
+        }
+
         @@media (max-width: 1100px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -718,10 +872,6 @@
 
             .content-area {
                 padding: 1.5rem 1.25rem;
-            }
-
-            .sidebar-wrap {
-                display: none;
             }
         }
 
@@ -735,7 +885,6 @@
             }
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -750,23 +899,36 @@
             border-radius: 3px;
         }
 
-        /* ===== TABLE WRAPPER ===== */
-        .table-scroll-wrap {
-            overflow-x: auto;
-            max-height: 460px;
-            overflow-y: auto;
+        /* SweetAlert2 custom overrides */
+        .swal-custom-popup {
+            font-family: 'DM Sans', sans-serif !important;
+            border-radius: 16px !important;
+        }
+
+        .swal-custom-title {
+            font-family: 'Playfair Display', serif !important;
+            font-size: 1.15rem !important;
+            color: #0d1b3e !important;
+        }
+
+        .swal-confirm-btn,
+        .swal-cancel-btn {
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            padding: .55rem 1.3rem !important;
         }
     </style>
 </head>
 <body>
 
-    <!-- ============================= HEADER ============================= -->
+    <!-- HEADER -->
     <header class="portal-header">
         <a href="#" class="brand" style="text-decoration:none;">
             <div class="brand-emblem"><i class="bi bi-mortarboard-fill"></i></div>
-            <div class="brand-text">
-                <span class="brand-title">RGUHS Affiliation Portal</span>
-                <span class="brand-sub">Rajiv Gandhi University of Health Sciences</span>
+            <div>
+                <div class="brand-title">RGUHS Affiliation Portal</div>
+                <div class="brand-sub">Rajiv Gandhi University of Health Sciences</div>
             </div>
         </a>
         <div class="header-meta">
@@ -783,9 +945,7 @@
         </div>
     </header>
 
-    <!-- ============================= BODY SHELL ============================= -->
     <div class="page-shell">
-
         <main class="content-area">
 
             <!-- Page Title -->
@@ -804,7 +964,7 @@
                 </span>
             </div>
 
-            <!-- ===== PROGRESS STEPPER ===== -->
+            <!-- STEPPER -->
             @{
                 var stepTitles = new[] {
                         "Institute Basic Details",
@@ -841,10 +1001,10 @@
                 </div>
             </div>
 
-            <!-- ===== MAIN GRID ===== -->
+            <!-- MAIN GRID -->
             <div class="main-grid">
 
-                <!-- ========== LEFT: FORM ========== -->
+                <!-- LEFT: ADD FORM -->
                 <div class="panel">
                     <div class="panel-header">
                         <i class="bi bi-journal-plus"></i>
@@ -868,20 +1028,18 @@
                         <form asp-action="Repo_UGPG" method="post" enctype="multipart/form-data" autocomplete="off">
                             @Html.AntiForgeryToken()
 
-                            <!-- Course Level -->
                             <div class="mb-3">
                                 <label for="CourseLevel" class="form-label">Course Level</label>
                                 <select id="CourseLevel" name="CourseLevel" asp-for="CourseLevel" class="form-select">
                                     <option value="">— Select Level —</option>
                                     @foreach (var lvl in courseLevels)
                                     {
-                                        <option value="@lvl" @@(Model.CourseLevel= =lvl ? "selected" : "" )>@lvl</option>
+                                        <option value="@lvl" @(Model.CourseLevel == lvl ? "selected" : "")>@lvl</option>
                                     }
                                 </select>
                                 <span asp-validation-for="CourseLevel" class="text-danger" style="font-size:.75rem;"></span>
                             </div>
 
-                            <!-- Course -->
                             <div class="mb-3">
                                 <label for="CourseDropdown" class="form-label">Course</label>
                                 <select asp-for="CourseCode" class="form-select" id="CourseDropdown" name="CourseCode">
@@ -890,27 +1048,24 @@
                                 <span asp-validation-for="CourseCode" class="text-danger" style="font-size:.75rem;"></span>
                             </div>
 
-                            <!-- Fresh / Increase -->
                             <div class="mb-3">
                                 <label asp-for="FreshOrIncrease" class="form-label">Fresh / Increase / Additional</label>
                                 <select asp-for="FreshOrIncrease" class="form-select" id="FreshOrIncrease" name="FreshOrIncrease">
                                     <option value="">— Select —</option>
                                     @foreach (var option in freshIncreaseOptions)
                                     {
-                                        <option value="@option" @@(Model.FreshOrIncrease= =option ? "selected" : "" )>@option</option>
+                                        <option value="@option" @(Model.FreshOrIncrease == option ? "selected" : "")>@option</option>
                                     }
                                 </select>
                                 <span asp-validation-for="FreshOrIncrease" class="text-danger" style="font-size:.75rem;"></span>
                             </div>
 
-                            <!-- Intake Details -->
                             <div class="mb-3">
                                 <label asp-for="IntakeDetails" class="form-label">Intake Details</label>
                                 <input asp-for="IntakeDetails" class="form-control" placeholder="e.g. 60" />
                                 <span asp-validation-for="IntakeDetails" class="text-danger" style="font-size:.75rem;"></span>
                             </div>
 
-                            <!-- Document Uploads -->
                             <div class="section-divider">
                                 <i class="bi bi-paperclip" style="color:var(--gold);font-size:.85rem;"></i>
                                 <span>Supporting Documents</span>
@@ -926,33 +1081,27 @@
                                         <span class="file-name file-not-selected">No file chosen</span>
                                         <input type="file" asp-for="RGUHSNotificationFile" class="hidden-file-input" />
                                     </div>
-                                    <span asp-validation-for="RGUHSNotificationFile" class="text-danger" style="font-size:.72rem;"></span>
                                 </div>
-
-                                <!-- INC -->
+                                <!-- DCI (was INC) -->
                                 <div>
-                                    <div class="upload-field-label">INC Upload</div>
+                                    <div class="upload-field-label">DCI Upload</div>
                                     <div class="upload-box" onclick="this.querySelector('.hidden-file-input').click()">
                                         <i class="bi bi-cloud-upload"></i>
                                         <span class="upload-label-txt">Click to upload</span>
                                         <span class="file-name file-not-selected">No file chosen</span>
                                         <input type="file" asp-for="INCUploadFile" class="hidden-file-input" />
                                     </div>
-                                    <span asp-validation-for="INCUploadFile" class="text-danger" style="font-size:.72rem;"></span>
                                 </div>
-
-                                <!-- KNMC -->
+                                <!-- KSDC (was KNMC) -->
                                 <div>
-                                    <div class="upload-field-label">KNMC Upload</div>
+                                    <div class="upload-field-label">KSDC Upload</div>
                                     <div class="upload-box" onclick="this.querySelector('.hidden-file-input').click()">
                                         <i class="bi bi-cloud-upload"></i>
                                         <span class="upload-label-txt">Click to upload</span>
                                         <span class="file-name file-not-selected">No file chosen</span>
                                         <input type="file" asp-for="KNMCUploadFile" class="hidden-file-input" />
                                     </div>
-                                    <span asp-validation-for="KNMCUploadFile" class="text-danger" style="font-size:.72rem;"></span>
                                 </div>
-
                                 <!-- GOK -->
                                 <div>
                                     <div class="upload-field-label">GOK Upload</div>
@@ -962,7 +1111,6 @@
                                         <span class="file-name file-not-selected">No file chosen</span>
                                         <input type="file" asp-for="GOKUploadFile" class="hidden-file-input" />
                                     </div>
-                                    <span asp-validation-for="GOKUploadFile" class="text-danger" style="font-size:.72rem;"></span>
                                 </div>
                             </div>
 
@@ -973,7 +1121,7 @@
                     </div>
                 </div>
 
-                <!-- ========== RIGHT: TABLE ========== -->
+                <!-- RIGHT: TABLE -->
                 <div class="panel">
                     <div class="table-panel-header">
                         <h5><i class="bi bi-table" style="color:var(--gold);margin-right:6px;"></i> Recent Uploads</h5>
@@ -989,7 +1137,7 @@
                         }
                         else
                         {
-                            <table class="data-table">
+                            <table class="data-table" id="intakeTable">
                                 <thead>
                                     <tr>
                                         <th>SlNo</th>
@@ -997,86 +1145,187 @@
                                         <th>Type</th>
                                         <th>Course</th>
                                         <th>RGUHS</th>
-                                        <th>INC</th>
-                                        <th>KNMC</th>
+                                        <th>DCI</th>
+                                        <th>KSDC</th>
                                         <th>GOK</th>
-                                        <th>Action</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var row in repositoryRows)
                                     {
-                                        <tr>
+                                        <tr data-id="@row.Id"
+                                            data-intake="@row.IntakeDetails"
+                                            data-type="@row.FreshOrIncrease"
+                                            data-course="@row.Course"
+                                            data-coursename="@row.CourseName">
+
+                                            <!-- SlNo -->
                                             <td style="font-weight:700;color:var(--text-muted);">@row.Id</td>
-                                            <td style="font-weight:600;">@row.IntakeDetails</td>
-                                            <td>
-                                                @if (row.FreshOrIncrease == "Fresh")
-                                                {
-                                                    <span class="badge-fresh">@row.FreshOrIncrease</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge-increase">@row.FreshOrIncrease</span>
-                                                }
-                                            </td>
-                                            <td>@row.CourseName</td>
-                                            <td>
-                                                @if (row.Rguhsnotification != null)
-                                                {
-                                                    <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="RGUHS" class="doc-btn">
-                                                        <i class="bi bi-eye"></i> View
-                                                    </a>
-                                                }
-                                                else
-                                                {
 
-                                                    <span class="doc-btn-missing">—</span>
-                                                }
-                                            </td>
+                                            <!-- Intake — view / edit -->
                                             <td>
-                                                @if (row.Inc != null)
-                                                {
-                                                    <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="INC" class="doc-btn">
-                                                        <i class="bi bi-eye"></i> View
-                                                    </a>
-                                                }
-                                                else
-                                                {
+                                                <span class="view-mode fw-600">@row.IntakeDetails</span>
+                                                <input class="edit-input edit-mode" name="intakeDetails"
+                                                       value="@row.IntakeDetails" style="display:none;width:70px;" />
+                                            </td>
 
-                                                    <span class="doc-btn-missing">—</span>
-                                                }
-                                            </td>
+                                            <!-- Type — view / edit -->
                                             <td>
-                                                @if (row.Knmc != null)
-                                                {
-                                                    <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="KNMC" class="doc-btn">
-                                                        <i class="bi bi-eye"></i> View
-                                                    </a>
-                                                }
-                                                else
-                                                {
+                                                <span class="view-mode">
+                                                    @if (row.FreshOrIncrease == "Fresh")
+                                                    {
+                                                        <span class="badge-fresh">@row.FreshOrIncrease</span>
+                                                    }
+                                                    else if (row.FreshOrIncrease == "Additional")
+                                                    {
 
-                                                    <span class="doc-btn-missing">—</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (row.Gok != null)
-                                                {
-                                                    <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="GOK" class="doc-btn">
-                                                        <i class="bi bi-eye"></i> View
-                                                    </a>
-                                                }
-                                                else
-                                                {
+                                                        <span class="badge-additional">@row.FreshOrIncrease</span>
+                                                    }
+                                                    else
+                                                    {
 
-                                                    <span class="doc-btn-missing">—</span>
-                                                }
+                                                        <span class="badge-increase">@row.FreshOrIncrease</span>
+                                                    }
+                                                </span>
+                                                <select class="edit-select edit-mode" name="freshOrIncrease" style="display:none;">
+                                                    <option value="Fresh" @(row.FreshOrIncrease == "Fresh" ? "selected" : "")>Fresh</option>
+                                                    <option value="Increase" @(row.FreshOrIncrease == "Increase" ? "selected" : "")>Increase</option>
+                                                    <option value="Additional" @(row.FreshOrIncrease == "Additional" ? "selected" : "")>Additional</option>
+                                                </select>
                                             </td>
+
+                                            <!-- Course — always-visible disabled select; stays disabled (read-only) even in edit mode -->
                                             <td>
-                                                <button type="button" class="btn-delete delete-row" data-id="@row.Id">
-                                                    <i class="bi bi-trash3"></i> Delete
-                                                </button>
+                                                <select class="course-select"
+                                                        name="courseCode"
+                                                        data-current-code="@row.Course"
+                                                        disabled
+                                                        style="font-size:.78rem;border:1.5px solid var(--border);border-radius:6px;padding:.28rem .5rem;background:#f4f6fb;color:var(--text-main);font-family:'DM Sans',sans-serif;min-width:120px;cursor:default;max-width:160px;">
+                                                    <option value="@row.Course" selected>@row.CourseName</option>
+                                                </select>
+                                                <!-- Hidden input carries the value on save since disabled selects are not submitted -->
+                                                <input type="hidden" class="hidden-course-code" name="courseCode" value="@row.Course" />
                                             </td>
+
+                                            <!-- RGUHS doc -->
+                                            <td>
+                                                <div class="view-mode">
+                                                    @if (row.Rguhsnotification != null)
+                                                    {
+                                                        <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="RGUHS" class="doc-btn" target="_blank">
+                                                            <i class="bi bi-eye"></i> View
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span class="doc-btn-missing">—</span>
+                                                    }
+                                                </div>
+                                                <div class="edit-mode" style="display:none;">
+                                                    <label class="inline-upload-label">
+                                                        <i class="bi bi-upload"></i> Replace
+                                                        <input type="file" name="rghsFile" class="d-none inline-file-trigger" accept=".pdf,.jpg,.jpeg,.png" />
+                                                    </label>
+                                                    <span class="inline-file-name">@(row.Rguhsnotification != null ? "Current file saved" : "No file")</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- DCI doc (was INC) -->
+                                            <td>
+                                                <div class="view-mode">
+                                                    @if (row.Inc != null)
+                                                    {
+                                                        <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="INC" class="doc-btn" target="_blank">
+                                                            <i class="bi bi-eye"></i> View
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span class="doc-btn-missing">—</span>
+                                                    }
+                                                </div>
+                                                <div class="edit-mode" style="display:none;">
+                                                    <label class="inline-upload-label">
+                                                        <i class="bi bi-upload"></i> Replace
+                                                        <input type="file" name="dciFile" class="d-none inline-file-trigger" accept=".pdf,.jpg,.jpeg,.png" />
+                                                    </label>
+                                                    <span class="inline-file-name">@(row.Inc != null ? "Current file saved" : "No file")</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- KSDC doc (was KNMC) -->
+                                            <td>
+                                                <div class="view-mode">
+                                                    @if (row.Knmc != null)
+                                                    {
+                                                        <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="KNMC" class="doc-btn" target="_blank">
+                                                            <i class="bi bi-eye"></i> View
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span class="doc-btn-missing">—</span>
+                                                    }
+                                                </div>
+                                                <div class="edit-mode" style="display:none;">
+                                                    <label class="inline-upload-label">
+                                                        <i class="bi bi-upload"></i> Replace
+                                                        <input type="file" name="ksdcFile" class="d-none inline-file-trigger" accept=".pdf,.jpg,.jpeg,.png" />
+                                                    </label>
+                                                    <span class="inline-file-name">@(row.Knmc != null ? "Current file saved" : "No file")</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- GOK doc -->
+                                            <td>
+                                                <div class="view-mode">
+                                                    @if (row.Gok != null)
+                                                    {
+                                                        <a asp-action="DownloadDoc" asp-route-id="@row.Id" asp-route-type="GOK" class="doc-btn" target="_blank">
+                                                            <i class="bi bi-eye"></i> View
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span class="doc-btn-missing">—</span>
+                                                    }
+                                                </div>
+                                                <div class="edit-mode" style="display:none;">
+                                                    <label class="inline-upload-label">
+                                                        <i class="bi bi-upload"></i> Replace
+                                                        <input type="file" name="gokFile" class="d-none inline-file-trigger" accept=".pdf,.jpg,.jpeg,.png" />
+                                                    </label>
+                                                    <span class="inline-file-name">@(row.Gok != null ? "Current file saved" : "No file")</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- Actions -->
+                                            <td>
+                                                <div class="action-cell">
+                                                    <div class="action-row-btns">
+                                                        <button type="button" class="btn-edit btn-edit-row">
+                                                            <i class="bi bi-pencil-square"></i> Edit
+                                                        </button>
+                                                        <button type="button" class="btn-save-row">
+                                                            <i class="bi bi-save"></i> Save
+                                                        </button>
+                                                    </div>
+                                                    <div class="action-row-btns">
+                                                        <button type="button" class="btn-cancel-row">
+                                                            <i class="bi bi-x-circle"></i> Cancel
+                                                        </button>
+                                                        <button type="button" class="btn-delete delete-row" data-id="@row.Id">
+                                                            <i class="bi bi-trash3"></i> Del
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+
                                         </tr>
                                     }
                                 </tbody>
@@ -1086,13 +1335,13 @@
                 </div>
 
             </div><!-- /main-grid -->
-            <!-- ===== NAVIGATION FOOTER ===== -->
+            <!-- NAV FOOTER -->
             <div class="nav-footer">
                 <a asp-controller="Repo" asp-action="Repo_BasicDetails" class="btn-official-outline">
                     <i class="bi bi-arrow-left"></i> Previous
                 </a>
                 <span style="font-size:.75rem;color:var(--text-muted);">
-                    <i class="bi bi-info-circle"></i> All fields marked are mandatory. Ensure documents are in PDF/JPG format.
+                    <i class="bi bi-info-circle"></i> All fields marked are mandatory. Documents must be PDF/JPG.
                 </span>
                 <a asp-controller="Repo" asp-action="Repo_Affiliated_YearwiseMaterials" class="btn-official" style="text-decoration:none;">
                     Proceed to Next <i class="bi bi-arrow-right"></i>
@@ -1100,32 +1349,34 @@
             </div>
 
         </main>
-    </div><!-- /page-shell -->
-    <!-- Bootstrap JS -->
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function () {
 
-            /* ---- Course by level ---- */
+            /* ───────────────────────────────────────────
+               1. Course by level (add form)
+            ─────────────────────────────────────────── */
             $('#CourseLevel').change(function () {
                 var selectedLevel = $(this).val();
-                var $courseDropdown = $('#CourseDropdown');
-                $courseDropdown.empty().append('<option value="">— Select —</option>');
+                var $cd = $('#CourseDropdown');
+                $cd.empty().append('<option value="">— Select —</option>');
                 if (selectedLevel) {
                     $.get('@Url.Action("GetCoursesByLevel")', { level: selectedLevel }, function (response) {
                         if (response.success) {
                             $.each(response.data, function (i, course) {
-                                $courseDropdown.append(
-                                    '<option value="' + course.courseCode + '">' + course.courseName + '</option>'
-                                );
+                                $cd.append('<option value="' + course.courseCode + '">' + course.courseName + '</option>');
                             });
                         }
                     });
                 }
             });
 
-            /* ---- Auto-set Fresh / Increase ---- */
+            /* ───────────────────────────────────────────
+               2. Auto Fresh / Increase (add form)
+            ─────────────────────────────────────────── */
             $('#CourseDropdown').change(function () {
                 var selectedText = $("#CourseDropdown option:selected").text();
                 if (selectedText && selectedText !== "— Select Level First —" && selectedText !== "— Select —") {
@@ -1135,39 +1386,244 @@
                 }
             });
 
-            /* ---- Delete row ---- */
-            $(document).on('click', '.delete-row', function () {
-                var $button = $(this);
-                var id = $button.data('id');
-                if (confirm("Are you sure you want to delete record #" + id + "? This action cannot be undone.")) {
-                    $.ajax({
-                        url: '@Url.Action("DeleteFacultyIntake")',
-                        type: 'POST',
-                        data: { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
-                        success: function (result) {
-                            if (result.success) {
-                                $button.closest('tr').fadeOut(350, function () { $(this).remove(); });
-                            } else {
-                                alert(result.message || "Delete failed. Please try again.");
-                            }
-                        },
-                        error: function () { alert("Request failed. Please check your connection."); }
+            /* ───────────────────────────────────────────
+               2b. Duplicate course+type guard on form submit
+            ─────────────────────────────────────────── */
+            $('form[action*="Repo_UGPG"]').on('submit', function (e) {
+                var selectedCourseCode = $('#CourseDropdown').val();
+                var selectedCourseName = $('#CourseDropdown option:selected').text().trim();
+                var selectedType       = $('#FreshOrIncrease').val();
+
+                if (!selectedCourseCode || !selectedType) return; // let server-side validation handle empties
+
+                var duplicate = false;
+                $('#intakeTable tbody tr').each(function () {
+                    var rowCode = $(this).find('.course-select').data('current-code') + '';
+                    var rowType = $(this).find('.view-mode .badge-fresh, .view-mode .badge-increase, .view-mode .badge-additional').text().trim();
+                    if (rowCode === selectedCourseCode && rowType.toLowerCase() === selectedType.toLowerCase()) {
+                        duplicate = true;
+                        return false; // break
+                    }
+                });
+
+                if (duplicate) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Already Saved',
+                        html: '<b>' + selectedCourseName + '</b> for <b style="color:#d97706;">' + selectedType + '</b> is already saved.<br>' +
+                              '<span style="font-size:.85rem;color:#6b7a99;margin-top:6px;display:block;">Use the <b>Edit</b> button on the existing row to change the values.</span>',
+                        confirmButtonColor: '#1d4ed8',
+                        confirmButtonText: 'Got it',
+                        customClass: { popup: 'swal-custom-popup', title: 'swal-custom-title' }
                     });
                 }
             });
-        });
 
-        /* ---- File upload label ---- */
-        document.addEventListener("DOMContentLoaded", function () {
+            /* ───────────────────────────────────────────
+               3. Add-form file label update
+            ─────────────────────────────────────────── */
             document.querySelectorAll(".hidden-file-input").forEach(function (input) {
                 input.addEventListener("change", function () {
-                    const fileLabel = this.closest(".upload-box").querySelector(".file-name");
-                    const hasFile = this.files && this.files.length > 0;
-                    fileLabel.textContent = hasFile ? this.files[0].name : "No file chosen";
-                    fileLabel.classList.toggle("file-selected", hasFile);
-                    fileLabel.classList.toggle("file-not-selected", !hasFile);
+                    const lbl = this.closest(".upload-box").querySelector(".file-name");
+                    const has = this.files && this.files.length > 0;
+                    lbl.textContent = has ? this.files[0].name : "No file chosen";
+                    lbl.classList.toggle("file-selected", has);
+                    lbl.classList.toggle("file-not-selected", !has);
                 });
             });
+
+            /* ───────────────────────────────────────────
+               4. Inline file trigger label update
+            ─────────────────────────────────────────── */
+            $(document).on('change', '.inline-file-trigger', function () {
+                var $label = $(this).closest('label').siblings('.inline-file-name');
+                if (this.files && this.files.length > 0) {
+                    $label.text(this.files[0].name).addClass('chosen');
+                } else {
+                    $label.text('No file chosen').removeClass('chosen');
+                }
+            });
+
+            /* ───────────────────────────────────────────
+               5. EDIT button — enter edit mode
+            ─────────────────────────────────────────── */
+            $(document).on('click', '.btn-edit-row', function () {
+                var $tr = $(this).closest('tr');
+
+                // Exit any other row currently in edit mode
+                $('.editing-row').each(function () {
+                    exitEditMode($(this), false);
+                });
+
+                // Show edit controls
+                $tr.find('.view-mode').hide();
+                $tr.find('.edit-mode').show();
+                $tr.addClass('editing-row');
+
+                // Toggle buttons
+                $(this).hide();
+                $tr.find('.btn-save-row').css('display', 'inline-flex');
+                $tr.find('.btn-cancel-row').css('display', 'inline-flex');
+                $tr.find('.delete-row').hide();
+            });
+
+            /* ───────────────────────────────────────────
+               6. CANCEL button — exit edit mode
+            ─────────────────────────────────────────── */
+            $(document).on('click', '.btn-cancel-row', function () {
+                var $tr = $(this).closest('tr');
+                exitEditMode($tr, false);
+            });
+
+            function exitEditMode($tr, saved) {
+                $tr.find('.view-mode').show();
+                $tr.find('.edit-mode').hide();
+                $tr.removeClass('editing-row');
+                $tr.find('.btn-edit-row').show();
+                $tr.find('.btn-save-row').hide();
+                $tr.find('.btn-cancel-row').hide();
+                $tr.find('.delete-row').show();
+
+                // Reset file input labels if not saved
+                if (!saved) {
+                    $tr.find('.inline-file-trigger').val('');
+                    $tr.find('.inline-file-name').each(function () {
+                        var original = $(this).data('original') || $(this).text();
+                        $(this).text(original).removeClass('chosen');
+                    });
+                }
+            }
+
+            /* ───────────────────────────────────────────
+               7. SAVE button — AJAX multipart submit
+            ─────────────────────────────────────────── */
+            $(document).on('click', '.btn-save-row', function () {
+                var $tr = $(this).closest('tr');
+                var id  = $tr.data('id');
+
+                // Build FormData from the row
+                var fd = new FormData();
+                fd.append('id',              id);
+                fd.append('intakeDetails',   $tr.find('input[name="intakeDetails"]').val());
+                fd.append('freshOrIncrease', $tr.find('select[name="freshOrIncrease"]').val());
+                fd.append('courseCode',      $tr.find('.hidden-course-code').val()); // disabled select not submitted, use hidden input
+
+                // Files — only append if a new file was chosen
+                appendFileIfChosen(fd, $tr, 'rghsFile');
+                appendFileIfChosen(fd, $tr, 'dciFile');
+                appendFileIfChosen(fd, $tr, 'ksdcFile');
+                appendFileIfChosen(fd, $tr, 'gokFile');
+
+                // CSRF token
+                fd.append('__RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+
+                $tr.addClass('row-saving');
+
+                $.ajax({
+                    url: '@Url.Action("EditFacultyIntake", "Repo")',
+                    type: 'POST',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        $tr.removeClass('row-saving');
+                        if (result.success) {
+                            // Update visible view-mode cells
+                            var newIntake = $tr.find('input[name="intakeDetails"]').val();
+                            var newType   = $tr.find('select[name="freshOrIncrease"]').val();
+
+                            $tr.find('td:nth-child(2) .view-mode').text(newIntake);
+
+                            var badgeHtml = newType === 'Fresh'
+                                ? '<span class="badge-fresh">' + newType + '</span>'
+                                : newType === 'Additional'
+                                    ? '<span class="badge-additional">' + newType + '</span>'
+                                    : '<span class="badge-increase">' + newType + '</span>';
+                            $tr.find('td:nth-child(3) .view-mode').html(badgeHtml);
+
+                            exitEditMode($tr, true);
+
+                            // Brief success flash
+                            $tr.css('background', '#f0fdf4');
+                            setTimeout(function () { $tr.css('background', ''); }, 1200);
+                        } else {
+                            alert(result.message || 'Save failed. Please try again.');
+                        }
+                    },
+                    error: function () {
+                        $tr.removeClass('row-saving');
+                        alert('Network error. Please check your connection and try again.');
+                    }
+                });
+            });
+
+            function appendFileIfChosen(fd, $tr, fieldName) {
+                var input = $tr.find('input[name="' + fieldName + '"]')[0];
+                if (input && input.files && input.files.length > 0) {
+                    fd.append(fieldName, input.files[0]);
+                }
+            }
+
+            /* ───────────────────────────────────────────
+               8. DELETE button — SweetAlert2 confirmation
+            ─────────────────────────────────────────── */
+            $(document).on('click', '.delete-row', function () {
+                var $btn  = $(this);
+                var id    = $btn.data('id');
+                var $tr   = $btn.closest('tr');
+                var course = $tr.find('.course-select option:selected').text().trim() || ('Record #' + id);
+                var type   = $tr.find('select[name="freshOrIncrease"] option:selected').text().trim()
+                             || $tr.find('.view-mode .badge-fresh, .view-mode .badge-increase, .view-mode .badge-additional').text().trim()
+                             || '';
+
+                Swal.fire({
+                    title: 'Delete this record?',
+                    html:  '<b>' + course + '</b>' + (type ? ' &mdash; <span style="color:#d97706;">' + type + '</span>' : '') +
+                           '<br><span style="font-size:.85rem;color:#6b7a99;margin-top:6px;display:block;">This action cannot be undone.</span>',
+                    icon:  'warning',
+                    showCancelButton:  true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor:  '#6b7a99',
+                    confirmButtonText:  '<i class="bi bi-trash3"></i>&nbsp; Yes, Delete',
+                    cancelButtonText:   'Cancel',
+                    reverseButtons: true,
+                    customClass: {
+                        popup:         'swal-custom-popup',
+                        title:         'swal-custom-title',
+                        confirmButton: 'swal-confirm-btn',
+                        cancelButton:  'swal-cancel-btn'
+                    }
+                }).then(function (result) {
+                    if (!result.isConfirmed) return;
+
+                    $.ajax({
+                        url:  '@Url.Action("DeleteFacultyIntake")',
+                        type: 'POST',
+                        data: { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+                        success: function (res) {
+                            if (res.success) {
+                                $tr.fadeOut(350, function () { $(this).remove(); });
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Record deleted successfully',
+                                    showConfirmButton: false,
+                                    timer: 2500,
+                                    timerProgressBar: true
+                                });
+                            } else {
+                                Swal.fire('Error', res.message || 'Delete failed. Please try again.', 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Network Error', 'Request failed. Please check your connection.', 'error');
+                        }
+                    });
+                });
+            });
+
         });
     </script>
 

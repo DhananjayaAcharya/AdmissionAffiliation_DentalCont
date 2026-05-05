@@ -57,6 +57,26 @@
         min-height: 100vh;
     }
 
+    .view-doc-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        margin-top: .5rem;
+        font-size: .8rem;
+        font-weight: 600;
+        color: #fff;
+        background: #2563eb;
+        border: none;
+        border-radius: 6px;
+        padding: .45rem .9rem;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+        .view-doc-btn:hover {
+            background: #1e40af;
+        }
+
     /* TOPBAR */
     .topbar {
         position: fixed;
@@ -906,8 +926,20 @@
                             </div>
                             @if (Model.TrustDocPath != null)
                             {
-                                <a href="@Url.Action("ViewTrustDoc", "Repo")" target="_blank" class="view-doc-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                                <a href="@Url.Action("ViewTrustDoc", "Repo", new { id = Model.CollegeCode, t = DateTime.Now.Ticks })"
+                                   target="_blank"
+                                   class="view-doc-btn">
+
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2.5"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                        <polyline points="15 3 21 3 21 9" />
+                                        <line x1="10" y1="14" x2="21" y2="3" />
+                                    </svg>
+
                                     View Trust Document
                                 </a>
                             }
@@ -922,8 +954,18 @@
                             </div>
                             @if (Model.EstablishmentDocPath != null)
                             {
-                                <a href="@Url.Action("ViewEstDoc", "Repo")" target="_blank" class="view-doc-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                                <a href="@Url.Action("ViewEstDoc", "Repo", new { id = Model.CollegeCode, t = DateTime.Now.Ticks })"
+                                   target="_blank"
+                                   class="view-doc-btn">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2.5"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                        <polyline points="15 3 21 3 21 9" />
+                                        <line x1="10" y1="14" x2="21" y2="3" />
+                                    </svg>
+
                                     View Establishment Document
                                 </a>
                             }
@@ -943,18 +985,24 @@
                                 <option value="">— Select District —</option>
                                 @foreach (var item in Model.DistrictDropdownList)
                                 {
-                                    <option value="@item.Value">@item.Text</option>
+                                    <option value="@item.Value"
+                                            @(item.Value == Model.SelectedDistrictId?.ToString() ? "selected" : "")>
+                                        @item.Text
+                                    </option>
                                 }
                             </select>
                             <span asp-validation-for="SelectedDistrictId" class="validation-msg"></span>
                         </div>
                         <div class="field">
                             <label asp-for="SelectedTalukId">Taluk <span class="req">*</span></label>
-                            <select id="talukDropdown" class="taluk-visual" required>
+
+                            <select asp-for="SelectedTalukId"
+                                    id="talukDropdown"
+                                    class="taluk-visual"
+                                    required>
                                 <option value="">— Select Taluk —</option>
                             </select>
 
-                            <input type="hidden" asp-for="SelectedTalukId" id="SelectedTalukId_hidden" />
                             <span asp-validation-for="SelectedTalukId" class="validation-msg"></span>
                         </div>
                     </div>
@@ -1067,14 +1115,31 @@
                 </div> *@
 
                 <div class="form-footer">
-                    <button type="submit" class="btn-primary">
+                   @*  <button type="submit" class="btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                             <polyline points="17 21 17 13 7 13 7 21" />
                             <polyline points="7 3 7 8 15 8" />
                         </svg>
                         Save &amp; Proceed
+                    </button> *@
+
+                    <a href="@Url.Action("PreviousAction", "Repo")" class="btn-secondary">
+                        ← Previous
+                    </a>
+
+                    <button type="submit" class="btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        💾 Save
                     </button>
+
+                    <a href="@Url.Action("Repo_UGPG", "Repo")" class="btn-secondary">
+                        Next →
+                    </a>
                 </div>
 
             </div>
@@ -1082,154 +1147,116 @@
     </main>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+<script>
 
-    <script>
-        /* ── Age calculator ── */
-        function calculateAge() {
-            const dob = document.getElementById('dob').value;
-            if (dob) {
-                const diff = Date.now() - new Date(dob).getTime();
-                document.getElementById('age').value = Math.abs(new Date(diff).getUTCFullYear() - 1970);
-            }
+    /* ── Age calculator ── */
+    function calculateAge() {
+        const dob = document.getElementById('dob').value;
+        if (dob) {
+            const diff = Date.now() - new Date(dob).getTime();
+            document.getElementById('age').value =
+                Math.abs(new Date(diff).getUTCFullYear() - 1970);
+        }
+    }
+
+    /* ── Any Other Degree toggle ── */
+    function toggleOtherDegree() {
+        const container = document.getElementById("otherDegreeContainer");
+        const checkbox = document.getElementById("degreeOther");
+
+        if (container && checkbox) {
+            container.style.display = checkbox.checked ? "block" : "none";
+        }
+    }
+
+    const degreeOther = document.getElementById("degreeOther");
+
+    if (degreeOther) {
+        degreeOther.addEventListener("change", toggleOtherDegree);
+        window.addEventListener("DOMContentLoaded", toggleOtherDegree);
+    }
+
+    /* ── District → Taluk cascade ── */
+           (function () {
+        const districtDropdown = document.getElementById("districtDropdown");
+        const talukDropdown = document.getElementById("talukDropdown");
+        const preselectedTaluk = "@Model.SelectedTalukId"?.trim();
+
+        const getTalukUrl = '@Url.Action("GetTaluksByDistrict", "Repo")';
+
+        if (!districtDropdown || !talukDropdown) return;
+
+        function setLoading() {
+            talukDropdown.innerHTML = '<option value="">⏳ Loading taluks...</option>';
+            talukDropdown.disabled = true;
         }
 
-        /* ── Course → Specialization ── */
-        const courseDropdown          = document.getElementById("CourseDropdown");
-        const specializationContainer = document.getElementById("specializationContainer");
-        const specializationOptions   = document.getElementById("specializationOptions");
-        const hiddenInput             = document.getElementById("CourseSelectedSpecialities");
-
-        const SPEC_MAP = {
-            "BSCN": ["Medical Surgical Nursing", "Community Health Nursing", "Pediatric Nursing"],
-            "MSCN": ["Obstetric & Gynecological Nursing", "Psychiatric Nursing", "Medical Surgical Nursing"],
-            "PHDN": ["Nursing Research", "Clinical Practice", "Health Administration"]
-        };
-
-        function renderSpecializations(courseCode, preSelected) {
-            const specs = SPEC_MAP[(courseCode || "").toUpperCase()] || [];
-            specializationOptions.innerHTML = "";
-            if (!specs.length) { specializationContainer.style.display = "none"; return; }
-
-            specializationContainer.style.display = "block";
-            specs.forEach(spec => {
-                const id = spec.replace(/\W+/g, '_');
-                const checked = preSelected && preSelected.includes(spec) ? "checked" : "";
-                specializationOptions.innerHTML += `
-                    <div class="spec-pill">
-                        <input type="checkbox" id="${id}" value="${spec}" ${checked}>
-                        <label for="${id}">${spec}</label>
-                    </div>`;
-            });
+        function setReady() {
+            talukDropdown.disabled = false;
         }
 
-        courseDropdown.addEventListener("change", function () {
-            renderSpecializations(this.value, []);
-        });
-
-        document.getElementById("facultyForm").addEventListener("submit", function () {
-            hiddenInput.value = Array.from(
-                document.querySelectorAll("#specializationOptions input:checked")
-            ).map(cb => cb.value).join(", ");
-        });
-
-        window.addEventListener("DOMContentLoaded", () => {
-            const existing = "@Model.CourseSelectedSpecialities";
-            const preSelected = existing ? existing.split(",").map(v => v.trim()) : [];
-            if (courseDropdown.value) renderSpecializations(courseDropdown.value, preSelected);
-        });
-
-        /* ── Any Other Degree toggle ── */
-        function toggleOtherDegree() {
-            document.getElementById("otherDegreeContainer").style.display =
-                document.getElementById("degreeOther").checked ? "block" : "none";
-        }
-
-
-        const degreeOther = document.getElementById("degreeOther");
-
-        if (degreeOther) {
-            degreeOther.addEventListener("change", toggleOtherDegree);
-
-            // Run once on load only if element exists
-            window.addEventListener("DOMContentLoaded", toggleOtherDegree);
-        }
-
-        /* ── District → Taluk cascade ──
-           ROOT CAUSE FIX: never set talukDropdown.disabled = true.
-           Disabled <select> elements are excluded from the POST body entirely,
-           so SelectedTalukId always arrived as null in the controller.
-           Solution: keep a HIDDEN INPUT (id="SelectedTalukId_hidden") that mirrors
-           the visual dropdown's value — the hidden input always submits.
-        ── */
-        (function () {
-            const districtDropdown = document.getElementById("districtDropdown");
-            const talukDropdown    = document.getElementById("talukDropdown");      // visual only
-            const talukHidden      = document.getElementById("SelectedTalukId_hidden"); // always posts
-            const preselectedTaluk = "@Model.SelectedTalukId";
-            debugger;
-            // Keep hidden input in sync whenever the visual dropdown changes
-            talukDropdown.addEventListener("change", function () {
-                talukHidden.value = this.value;
-            });
-
-            function setLoading() {
-                talukDropdown.innerHTML = '<option value="">⏳ Loading taluks…</option>';
-                talukDropdown.style.opacity = "0.6";
-                talukDropdown.style.pointerEvents = "none";
-                // Clear hidden while loading so an old stale value isn't submitted
-                talukHidden.value = "";
+        function loadTaluks(districtId, selectedTalukId) {
+            if (!districtId) {
+                talukDropdown.innerHTML = '<option value="">— Select Taluk —</option>';
+                return;
             }
 
-            function setReady() {
-                talukDropdown.style.opacity = "";
-                talukDropdown.style.pointerEvents = "";
-            }
+            setLoading();
 
-            function loadTaluks(districtName, selectedTalukId) {
-                if (!districtName) {
+            fetch(getTalukUrl + '?districtId=' + encodeURIComponent(districtId))
+                .then(res => {
+                    if (!res.ok) throw new Error("Network error: " + res.status);
+                    return res.json();
+                })
+                .then(data => {
                     talukDropdown.innerHTML = '<option value="">— Select Taluk —</option>';
-                    talukHidden.value = "";
-                    setReady();
-                    return;
-                }
 
-                setLoading();
+                    if (!data || data.length === 0) {
+                        talukDropdown.innerHTML = '<option value="">— No taluks found —</option>';
+                        setReady();
+                        return;
+                    }
 
-                fetch('/Aff_Nursing/GetTaluksByDistrict?districtName=' + encodeURIComponent(districtName))
-                    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-                    .then(data => {
-                        talukDropdown.innerHTML = '<option value="">— Select Taluk —</option>';
-                        (data || []).forEach(item => {
-                            const opt       = document.createElement("option");
-                            opt.value       = item.value;
-                            opt.textContent = item.text;
-                            if (String(item.value) === String(selectedTalukId)) {
-                                opt.selected  = true;
-                                talukHidden.value = item.value; // ✅ restore hidden on edit
-                            }
-                            talukDropdown.appendChild(opt);
-                        });
-                        setReady();
-                    })
-                    .catch(err => {
-                        console.error("Taluk load failed:", err);
-                        talukDropdown.innerHTML = '<option value="">⚠ Error loading taluks</option>';
-                        talukHidden.value = "";
-                        setReady();
+                    data.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = String(item.value).trim();
+                        option.textContent = item.text;
+
+                        // ✅ Robust comparison: trim both sides
+                        if (selectedTalukId && String(item.value).trim() === String(selectedTalukId).trim()) {
+                            option.selected = true;
+                        }
+
+                        talukDropdown.appendChild(option);
                     });
-            }
 
-            if (districtDropdown) {
-                // Edit mode: district already has a value → restore taluks + pre-select saved taluk
-                if (districtDropdown.value) {
-                    loadTaluks(districtDropdown.value, preselectedTaluk);
-                }
-                districtDropdown.addEventListener("change", function () {
-                    loadTaluks(this.value, null);
+                    setReady();
+
+                    // ✅ Debug: log what was selected
+                    console.log("Preselected taluk:", selectedTalukId);
+                    console.log("Taluk dropdown value after load:", talukDropdown.value);
+                })
+                .catch(err => {
+                    console.error("Taluk fetch error:", err);
+                    talukDropdown.innerHTML = '<option value="">⚠ Error loading taluks</option>';
+                    setReady();
                 });
+        }
+
+        // ✅ Wait for full DOM, then load taluks for the already-selected district
+        document.addEventListener("DOMContentLoaded", function () {
+            const districtVal = districtDropdown.value?.trim();
+            console.log("District on load:", districtVal);
+            console.log("Preselected taluk:", preselectedTaluk);
+
+            if (districtVal) {
+                loadTaluks(districtVal, preselectedTaluk);
             }
-        })();
-    </script>
-}
+        });
+
+        districtDropdown.addEventListener("change", function () {
+            loadTaluks(this.value?.trim(), null);
+        });
+    })();
+
+</script>
