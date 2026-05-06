@@ -148,7 +148,7 @@
 
         .content-area {
             flex: 1;
-            padding: 2rem 2.5rem;
+            padding: 1.5rem 2.5rem;
             max-width: 1440px;
             margin: 0 auto;
             width: 100%;
@@ -159,7 +159,7 @@
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            margin-bottom: 1.75rem;
+            margin-bottom: 0.05rem;
             padding-bottom: 1.25rem;
             border-bottom: 1px solid var(--border);
         }
@@ -170,6 +170,7 @@
                 font-weight: 700;
                 color: var(--navy);
                 line-height: 1.2;
+                text-align: center;s
             }
 
             .page-title-block .page-crumb {
@@ -190,7 +191,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1rem 1.5rem 1.25rem;
+            padding: 1rem 1.5rem .5rem;
             margin-bottom: 1.75rem;
             box-shadow: var(--shadow-sm);
         }
@@ -202,6 +203,7 @@
             letter-spacing: 1.5px;
             color: var(--text-muted);
             margin-bottom: .75rem;
+            text-align: center;
         }
 
         .stepper {
@@ -305,34 +307,98 @@
         .panel {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
+            border-radius: 14px; /* softer rounded */
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08); /* smoother shadow */
             overflow: hidden;
+            margin-bottom: 1.5rem; /* spacing between panels */
         }
 
+
+        /* ================= HEADER ================= */
+
         .panel-header {
-            padding: .85rem 1.25rem;
+            padding: 1.2rem 1.5rem; /* increased padding */
             background: var(--navy);
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center; /* better spacing */
+            gap: 12px;
         }
 
-            .panel-header h5 {
-                font-family: 'Playfair Display', serif;
-                font-size: 1rem;
-                font-weight: 700;
-                color: #fff;
-                margin: 0;
-            }
+        .panel-header h5 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; /* slightly bigger */
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
 
-            .panel-header i {
-                color: var(--gold);
-                font-size: 1.1rem;
-            }
+        .panel-header i {
+            color: var(--gold);
+            font-size: 1.2rem; /* slightly bigger icon */
+        }
+
+
+        /* ================= BODY ================= */
 
         .panel-body {
-            padding: 1.5rem;
+            padding: 1.75rem; /* more breathing space */
+        }
+
+
+        /* ================= TABLE IMPROVEMENT ================= */
+
+        .table-scroll-wrap {
+            padding: 1rem 1.5rem; /* add spacing around table */
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px; /* row gap effect */
+        }
+
+        .data-table th {
+            padding: 12px 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 14px 10px; /* increased row height */
+            background: #fff;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        /* ================= ACTION BUTTON SPACING ================= */
+
+        .action-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* spacing between buttons */
+        }
+
+        .action-row-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+
+        /* ================= EMPTY STATE ================= */
+
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 10px;
         }
 
         /* FORM */
@@ -787,7 +853,7 @@
         /* Action cell layout */
         .action-cell {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 4px;
             min-width: 90px;
         }
@@ -950,18 +1016,38 @@
 
             <!-- Page Title -->
             <div class="page-title-block">
-                <div>
+                <div style="width: 100%">
                     <h1>UG / PG Intake Details</h1>
-                    <div class="page-crumb">
+                    @* <div class="page-crumb">
                         <i class="bi bi-house-fill"></i> Home
                         <i class="bi bi-chevron-right" style="font-size:.65rem;"></i> Admission Affiliation
                         <i class="bi bi-chevron-right" style="font-size:.65rem;"></i>
                         <strong>Course Intake</strong>
+                    </div> *@
+                    <div class="page-crumb">
+    
+                        <!-- Home -->
+                        <a asp-controller="Collegelogin" asp-action="Dashboard" class="crumb-link">
+                            <i class="bi bi-house-fill"></i> Home
+                        </a>
+
+                        <i class="bi bi-chevron-right crumb-separator"></i>
+
+                        <!-- College Details -->
+                        <a asp-controller="Repo" asp-action="Repo_BasicDetails" class="crumb-link">
+                            College Details
+                        </a>
+
+                        <i class="bi bi-chevron-right crumb-separator"></i>
+
+                        <!-- Current Page -->
+                        <strong>Course Intake</strong>
+
                     </div>
                 </div>
-                <span style="font-size:.72rem;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;">
+                @* <span style="font-size:.72rem;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;">
                     <i class="bi bi-shield-lock" style="color:var(--gold);"></i> Secure Session
-                </span>
+                </span> *@
             </div>
 
             <!-- STEPPER -->
@@ -969,10 +1055,10 @@
                 var stepTitles = new[] {
                         "Institute Basic Details",
                         "Course Details",
-                        "Hospital Details",
-                        "Required Faculty Details",
-                        "Add College Faculty details",
-                        "Academic Performance"
+                        // "Hospital Details",
+                        // "Required Faculty Details",
+                        // "Add College Faculty details",
+                        // "Academic Performance"
                         };
             }
             <div class="stepper-card">
@@ -1141,9 +1227,10 @@
                                 <thead>
                                     <tr>
                                         <th>SlNo</th>
+                                        <th>Course Level</th>
+                                        <th>Course</th>
                                         <th>Intake</th>
                                         <th>Type</th>
-                                        <th>Course</th>
                                         <th>RGUHS</th>
                                         <th>DCI</th>
                                         <th>KSDC</th>
@@ -1162,6 +1249,35 @@
 
                                             <!-- SlNo -->
                                             <td style="font-weight:700;color:var(--text-muted);">@row.Id</td>
+
+                                            <!-- Course Level — always-visible disabled select; stays disabled (read-only) even in edit mode -->
+                                            <td>
+                                                <select class="course-select"
+                                                        name="courseLevel"
+                                                        data-current-code="@row.CourseLevel"
+                                                        id="tblCourseLevel"
+                                                        disabled
+                                                        style="font-size:.78rem;border:1.5px solid var(--border);border-radius:6px;padding:.28rem .5rem;background:#f4f6fb;color:var(--text-main);font-family:'DM Sans',sans-serif;min-width:120px;cursor:default;max-width:160px;">
+                                                    <option value="@row.CourseLevel" selected>@row.CourseLevel</option>
+                                                </select>
+                                                <!-- Hidden input carries the value on save since disabled selects are not submitted -->
+                                                <input type="hidden" class="hidden-course-code" name="courseLevel" value="@row.CourseLevel" />
+                                            </td>
+
+                                            <!-- Course — always-visible disabled select; stays disabled (read-only) even in edit mode -->
+                                            <td>
+                                                <select class="course-select"
+                                                        name="courseCode"
+                                                        data-current-code="@row.Course"
+                                                        id="tblCourseSelect"
+                                                        disabled
+                                                        style="font-size:.78rem;border:1.5px solid var(--border);border-radius:6px;padding:.28rem .5rem;background:#f4f6fb;color:var(--text-main);font-family:'DM Sans',sans-serif;min-width:120px;cursor:default;max-width:160px;">
+                                                    <option value="@row.Course" selected>@row.CourseName</option>
+                                                </select>
+                                                <!-- Hidden input carries the value on save since disabled selects are not submitted -->
+                                                <input type="hidden" class="hidden-course-code" name="courseCode" value="@row.Course" />
+                                            </td>
+
 
                                             <!-- Intake — view / edit -->
                                             <td>
@@ -1195,19 +1311,7 @@
                                                 </select>
                                             </td>
 
-                                            <!-- Course — always-visible disabled select; stays disabled (read-only) even in edit mode -->
-                                            <td>
-                                                <select class="course-select"
-                                                        name="courseCode"
-                                                        data-current-code="@row.Course"
-                                                        disabled
-                                                        style="font-size:.78rem;border:1.5px solid var(--border);border-radius:6px;padding:.28rem .5rem;background:#f4f6fb;color:var(--text-main);font-family:'DM Sans',sans-serif;min-width:120px;cursor:default;max-width:160px;">
-                                                    <option value="@row.Course" selected>@row.CourseName</option>
-                                                </select>
-                                                <!-- Hidden input carries the value on save since disabled selects are not submitted -->
-                                                <input type="hidden" class="hidden-course-code" name="courseCode" value="@row.Course" />
-                                            </td>
-
+                                            
                                             <!-- RGUHS doc -->
                                             <td>
                                                 <div class="view-mode">
@@ -1309,7 +1413,7 @@
                                                 <div class="action-cell">
                                                     <div class="action-row-btns">
                                                         <button type="button" class="btn-edit btn-edit-row">
-                                                            <i class="bi bi-pencil-square"></i> Edit
+                                                            <i class="bi bi-pencil-square"></i>
                                                         </button>
                                                         <button type="button" class="btn-save-row">
                                                             <i class="bi bi-save"></i> Save
@@ -1320,7 +1424,7 @@
                                                             <i class="bi bi-x-circle"></i> Cancel
                                                         </button>
                                                         <button type="button" class="btn-delete delete-row" data-id="@row.Id">
-                                                            <i class="bi bi-trash3"></i> Del
+                                                            <i class="bi bi-trash3"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1362,6 +1466,20 @@
             $('#CourseLevel').change(function () {
                 var selectedLevel = $(this).val();
                 var $cd = $('#CourseDropdown');
+                $cd.empty().append('<option value="">— Select —</option>');
+                if (selectedLevel) {
+                    $.get('@Url.Action("GetCoursesByLevel")', { level: selectedLevel }, function (response) {
+                        if (response.success) {
+                            $.each(response.data, function (i, course) {
+                                $cd.append('<option value="' + course.courseCode + '">' + course.courseName + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+            $('#tblCourseLevel').change(function () {
+                var selectedLevel = $(this).val();
+                var $cd = $('#tblCourseSelect');
                 $cd.empty().append('<option value="">— Select —</option>');
                 if (selectedLevel) {
                     $.get('@Url.Action("GetCoursesByLevel")', { level: selectedLevel }, function (response) {

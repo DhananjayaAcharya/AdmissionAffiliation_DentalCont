@@ -17,3 +17,5 @@ Thumbs.db
 # Visual Studio publish profiles
 Properties/PublishProfiles/
 *.pubxml
+
+Medical_Affiliation/wwwroot/uploads/

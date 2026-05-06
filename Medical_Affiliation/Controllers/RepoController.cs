@@ -401,7 +401,7 @@ namespace Medical_Affiliation.Controllers
             }
             if (fileBytes == null) return NotFound("File not found");
 
-            return File(fileBytes, contentType, fileName);
+            return File(fileBytes, contentType);
         }
 
         // AJAX: return courses for a given level
@@ -487,6 +487,7 @@ namespace Medical_Affiliation.Controllers
                 CollegeCode = collegeCode,                   // session college code
                 FacultyCode = facultyCode,                   // session faculty code
                 CourseName = selectedCourseName,             // store CourseName
+                CourseLevel = model.CourseLevel
             };
 
             // Helper to convert IFormFile to byte[]
